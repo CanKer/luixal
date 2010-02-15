@@ -15,7 +15,8 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        System.out.println("UEM - Language Processors 2.1 - Luis Alberto Pérez García - 19903316");
+        System.out.println("--------------------------------------------------------------------\n");
     }
 
 }
