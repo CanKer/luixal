@@ -9,6 +9,6 @@ package pl21.Automata;
  *
  * @author nemesis
  */
-public class AutomataFN {
+public class AutomataFND {
 
 }
