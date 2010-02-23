@@ -6,6 +6,7 @@
 package pl21.Automata;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -95,8 +96,23 @@ public class AutomataFD extends Automata {
 
     @Override
     boolean removeState(String state) {
-        throw new UnsupportedOperationException("Not supported yet.");
+//        throw new UnsupportedOperationException("Not supported yet.");
         // removing 'state' from graph's keys
+        if (this.graph.containsKey(state)) {
+            // removing entries for 'state':
+            this.graph.remove(state);
+            // removing transitions going to 'state':
+            for (String i:this.graph.keySet()) {
+                for (String j:this.graph.get(i).keySet()) {
+                    if (this.graph.get(i).get(j).equals(state)) {
+                        this.graph.get(i).remove(j);
+                    }
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
         // removing transitions in which 'state' appears as destination state
     }
 
@@ -110,6 +126,7 @@ public class AutomataFD extends Automata {
         throw new UnsupportedOperationException("Not supported yet.");
         // mantaining a set variable for alphabet??
         // going through every transition populating the returning set??
+       
     }
 
     @Override
