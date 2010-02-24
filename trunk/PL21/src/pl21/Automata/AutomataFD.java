@@ -6,12 +6,10 @@
 package pl21.Automata;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  *
- * @author nemesis
+ * @author Luis Alberto Pérez García
  */
 
 // only one transition for echar pair (state, symbol)
@@ -47,6 +45,7 @@ public class AutomataFD extends Automata {
     public boolean addTransition(String orig_state, String dest_state, String symbol) {
         if (this.graph.containsKey(orig_state) && this.graph.containsKey(dest_state)) {
             this.graph.get(orig_state).put(symbol, dest_state);
+            this.addSymbol(symbol);
             return true;
         } else {
             return false;
@@ -54,18 +53,21 @@ public class AutomataFD extends Automata {
     }
 
     @Override
-    boolean clearAll() {
-        this.graph.clear();
-        return (this.graph.size() == 0);
+    public boolean clearAll() {
+        if (super.clearAll()) {
+            this.graph.clear();
+            return (this.graph.size() == 0);
+        }
+        return false;
     }
 
     @Override
-    boolean isState(String state) {
+    public boolean isState(String state) {
         return this.graph.containsKey(state);
     }
 
     @Override
-    boolean setInitState(String state) {
+    public boolean setInitState(String state) {
         if (this.graph.containsKey(state)) {
             this.init_state = state;
             return true;
@@ -75,12 +77,12 @@ public class AutomataFD extends Automata {
     }
 
     @Override
-    boolean isInitState(String state) {
+    public boolean isInitState(String state) {
         return this.init_state.equals(state);
     }
 
     @Override
-    boolean setFinalState(String state) {
+    public boolean setFinalState(String state) {
         if (this.graph.containsKey(state)) {
             this.final_state = state;
             return true;
@@ -90,14 +92,12 @@ public class AutomataFD extends Automata {
     }
 
     @Override
-    boolean isFinalState(String state) {
+    public boolean isFinalState(String state) {
         return this.final_state.equals(state);
     }
 
     @Override
-    boolean removeState(String state) {
-//        throw new UnsupportedOperationException("Not supported yet.");
-        // removing 'state' from graph's keys
+    public boolean removeState(String state) {
         if (this.graph.containsKey(state)) {
             // removing entries for 'state':
             this.graph.remove(state);
@@ -113,29 +113,25 @@ public class AutomataFD extends Automata {
         } else {
             return false;
         }
-        // removing transitions in which 'state' appears as destination state
     }
 
     @Override
-    Integer getNumberOfStates() {
+    public Integer getNumberOfStates() {
         return this.graph.size();
     }
 
     @Override
-    Set<String> getAlphabet() {
-        throw new UnsupportedOperationException("Not supported yet.");
-        // mantaining a set variable for alphabet??
-        // going through every transition populating the returning set??
-       
+    public boolean removeTransition(String orig_state, String dest_state, String symbol) {
+        if (this.graph.containsKey(orig_state) && this.graph.get(orig_state).containsKey(symbol)) {
+                return (this.graph.get(orig_state).remove(symbol) != null);
+        }
+        return false;
     }
 
     @Override
-    boolean removeTransition(String origin_state, String dest_state, String symbol) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     public String toString() {
         String aux = this.id + "\n";
+        aux += "Alphabet: " + this.alphabet.toString() + "\n";
         aux += "States: " + this.graph.keySet().toString() + "\n";
         for (String state:this.graph.keySet()) {
             aux += "State: " + state + ":\n";
@@ -143,7 +139,6 @@ public class AutomataFD extends Automata {
                 aux += "\t" + symbol + " --> " + this.graph.get(state).get(symbol) + "\n";
             }
         }
-        aux += "\n\nEnd of Generic AutomataFD.";
         return aux;
     }
 
@@ -179,6 +174,11 @@ public class AutomataFD extends Automata {
         afd.addTransition("e4", "e3", "b");
         System.out.println("DONE!");
         System.out.println("\n\nNow showing the automata (toString test :P):");
+        System.out.println(afd);
+        System.out.println("Removing transition (e4,b,e3):" + afd.removeTransition("e4", "e3", "b"));
+        System.out.println(afd);
+        System.out.println("Removing state 'e4'. This should also remove transitions (e2,a,e4) and (e4,b,e3), let's see...");
+        afd.removeState("e4");
         System.out.println(afd);
     }
 }

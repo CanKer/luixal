@@ -5,17 +5,17 @@
 
 package pl21.Automata;
 
-import java.util.Set;
+import java.util.HashSet;
 
 /**
  *
- * @author nemesis
+ * @author Luis Alberto Pérez García
  */
 public abstract class Automata {
 
     protected String id;                    // Automata's IDentificator
 //    protected HashSet<String> states;     // state's container
-//    protected HashSet<String> alphabet;   // automata's alphabet
+    protected HashSet<String> alphabet;   // automata's alphabet
     protected String init_state;            // init state
     protected String final_state;           // final state
 
@@ -27,32 +27,40 @@ public abstract class Automata {
         this.id = "Generic Automata";
         this.init_state = "";
         this.final_state = "";
+        this.alphabet = new HashSet<String>();
     }
 
     Automata(Automata a) {
         this.id = a.getId();
         this.init_state = a.getInitState();
         this.final_state = a.getFinalState();
+        this.alphabet = new HashSet<String>(a.getAlphabet());
     }
 
-    public void setId(String id) {
+    protected void setId(String id) {
         this.id = id;
     }
 
-    public String getId() {
+    protected String getId() {
         return this.id;
     }
 
-    public String getInitState() {
+    protected String getInitState() {
         return this.init_state;
     }
 
-    public String getFinalState() {
+    protected String getFinalState() {
         return this.final_state;
     }
 
     // not-for-monkeys methods:
-    abstract boolean clearAll();
+    protected boolean clearAll() {
+        this.final_state = "";
+        this.init_state = "";
+        this.id = "";
+        this.alphabet.clear();
+        return (this.alphabet.size() == 0);
+    }
     
     // States related methods:
     abstract boolean addState(String state);
@@ -65,7 +73,26 @@ public abstract class Automata {
     abstract Integer getNumberOfStates();
 
     // Alphabet related methods:
-    abstract Set<String> getAlphabet();
+    protected HashSet<String> getAlphabet() {
+        return this.alphabet;
+    }
+
+    protected boolean addSymbol(String symbol) {
+        return this.alphabet.add(symbol);
+    }
+
+    protected boolean removeSymbol(String symbol) {
+        return this.alphabet.remove(symbol);
+    }
+
+    protected boolean clearAlphabet() {
+        this.alphabet.clear();
+        return (this.alphabet.size() == 0);
+    }
+
+    protected boolean isSymbol(String symbol) {
+        return this.alphabet.contains(symbol);
+    }
 
     // Transitions related methods:
     abstract boolean addTransition(String origin_state, String dest_state, String symbol);
