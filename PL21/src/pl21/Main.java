@@ -7,7 +7,7 @@ package pl21;
 
 /**
  *
- * @author nemesis
+ * @author Luis Alberto Pérez García
  */
 public class Main {
 
