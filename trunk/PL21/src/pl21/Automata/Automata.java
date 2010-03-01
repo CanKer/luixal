@@ -21,6 +21,9 @@ public abstract class Automata {
 
     Automata(String id) {
         this.id = id;
+        this.init_state = "";
+        this.final_state = "";
+        this.alphabet = new HashSet<String>();
     }
 
     Automata() {

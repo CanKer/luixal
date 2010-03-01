@@ -129,9 +129,54 @@ public class AutomataFND extends Automata {
     public boolean removeTransition(String origin_state, String dest_state, String symbol) {
         if (this.graph.containsKey(origin_state) && this.graph.containsKey(dest_state) && this.alphabet.contains(symbol)) {
             if (this.graph.get(origin_state).containsKey(symbol) && this.graph.get(origin_state).get(symbol).contains(dest_state)) {
-                    return this.graph.get(origin_state).get(symbol).remove(dest_state);
+                    if (this.graph.get(origin_state).get(symbol).size() == 1) {
+                        this.graph.get(origin_state).remove(symbol);
+                        return this.graph.get(origin_state).isEmpty();
+                    } else {
+                        return this.graph.get(origin_state).get(symbol).remove(dest_state);
+                    }
             }
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        String aux = this.id + "\n";
+        aux += "Alphabet: " + this.alphabet.toString() + "\n";
+        aux += "States: " + this.graph.keySet().toString() + "\n";
+        aux += "Init State: " + this.getInitState() + "\n";
+        aux += "Final State: " + this.getFinalState() + "\n";
+        for (String state:this.graph.keySet()) {
+            aux += "State: " + state + ":\n";
+            for (String symbol:this.graph.get(state).keySet()) {
+                aux += "\t" + symbol + " --> " + this.graph.get(state).get(symbol).toString() + "\n";
+            }
+        }
+        return aux;
+    }
+
+    public static void main(String[] args) {
+        AutomataFND afnd = new AutomataFND("de pruebas :P");
+        afnd.addState("e1");
+        afnd.addState("e2");
+        afnd.addState("e3");
+        afnd.addState("e4");
+        afnd.addTransition("e1", "e2", "a");
+        afnd.addTransition("e1", "e2", "b");
+        afnd.addTransition("e1", "e3", "a");
+        afnd.addTransition("e1", "e4", "b");
+        System.out.println(afnd);
+        afnd.addState("e5");
+        afnd.addTransition("e2", "e5", "a");
+        afnd.addTransition("e2", "e5", "b");
+        afnd.addTransition("e2", "e5", "c");
+        afnd.setFinalState("e5");
+        afnd.setInitState("e1");
+        System.out.println(afnd);
+        afnd.removeTransition("e2", "e5", "a");
+        System.out.println(afnd);
+        afnd.removeState("e2");
+        System.out.println(afnd);
     }
 }
