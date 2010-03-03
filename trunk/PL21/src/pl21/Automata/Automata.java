@@ -40,24 +40,24 @@ public abstract class Automata {
         this.alphabet = new HashSet<String>(a.getAlphabet());
     }
 
-    protected void setId(String id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    protected String getId() {
+    public String getId() {
         return this.id;
     }
 
-    protected String getInitState() {
+    public String getInitState() {
         return this.init_state;
     }
 
-    protected String getFinalState() {
+    public String getFinalState() {
         return this.final_state;
     }
 
     // not-for-monkeys methods:
-    protected boolean clearAll() {
+    public boolean clearAll() {
         this.final_state = "";
         this.init_state = "";
         this.id = "";
@@ -67,6 +67,7 @@ public abstract class Automata {
     
     // States related methods:
     abstract boolean addState(String state);
+    abstract boolean addFinalState(String state);
     abstract boolean isState(String state);
     abstract boolean setInitState(String state);
     abstract boolean isInitState(String state);
