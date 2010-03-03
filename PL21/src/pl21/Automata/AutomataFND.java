@@ -16,21 +16,22 @@ public class AutomataFND extends Automata {
 
     private HashMap<String, HashMap<String, HashSet<String>>> graph;
 
-    AutomataFND() {
+    public AutomataFND() {
         super();
         this.id += this.id + " - AFND";
         this.graph = new HashMap<String, HashMap<String, HashSet<String>>>();
     }
 
-    AutomataFND(String id) {
+    public AutomataFND(String id) {
         super(id);
         this.graph = new HashMap<String, HashMap<String, HashSet<String>>>();
     }
 
-    AutomataFND(AutomataFND afnd) {
+    public AutomataFND(AutomataFND afnd) {
         super(afnd);
         this.graph = new HashMap<String, HashMap<String, HashSet<String>>>(afnd.graph);
     }
+
 
     @Override
     public boolean clearAll() {
@@ -49,6 +50,16 @@ public class AutomataFND extends Automata {
         } else {
             this.graph.put(state, new HashMap<String, HashSet<String>>());
             return true;
+        }
+    }
+
+    @Override
+    public boolean addFinalState(String state) {
+        if (this.addState(state)) {
+            this.setFinalState(state);
+            return true;
+        } else {
+            return false;
         }
     }
 

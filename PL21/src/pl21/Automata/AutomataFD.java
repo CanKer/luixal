@@ -17,18 +17,18 @@ public class AutomataFD extends Automata {
 
     private HashMap<String, HashMap<String, String>> graph;
 
-    AutomataFD() {
+    public AutomataFD() {
         super();
         this.id += this.id + " - AFD";
         this.graph = new HashMap<String, HashMap<String, String>>();
     }
 
-    AutomataFD(String id) {
+    public AutomataFD(String id) {
         super(id);
         this.graph = new HashMap<String, HashMap<String, String>>();
     }
 
-    AutomataFD(AutomataFD afd) {
+    public AutomataFD(AutomataFD afd) {
         super(afd);
         this.graph = new HashMap<String, HashMap<String, String>>(afd.graph);
     }
@@ -39,6 +39,16 @@ public class AutomataFD extends Automata {
         } else {
             this.graph.put(state, new HashMap<String, String>());
             return true;
+        }
+    }
+
+    @Override
+    public boolean addFinalState(String state) {
+        if (this.addState(state)) {
+            this.setFinalState(state);
+            return true;
+        } else {
+            return false;
         }
     }
 
