@@ -96,7 +96,8 @@ public class RegExpToAFND {
     public AutomataFND operate(AutomataFND termA, AutomataFND termB, String op) {
         // creating and initializing a new AFND for the result:
         AutomataFND result = new AutomataFND();
-        termB.renameStates();
+        termA.renameStates(0);
+        termB.renameStates(termA.getNumberOfStates());
         result.addAutomataFND(termA);
         result.addAutomataFND(termB);
         // getting previously initial and final states:
@@ -202,7 +203,7 @@ public class RegExpToAFND {
 //        AutomataFND result = test.operate(autoA, autoB, "·");
 //        result.setId("R");
 //        System.out.println(result);
-        AutomataFND result = test.TwoStacksAlgorithm("a·b·c");
+        AutomataFND result = test.TwoStacksAlgorithm("a·b|c");
         System.out.println("RESULT:\n" + result);
     }
 }
