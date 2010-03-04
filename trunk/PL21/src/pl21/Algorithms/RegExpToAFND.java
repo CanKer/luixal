@@ -54,6 +54,7 @@ public class RegExpToAFND {
     // Operates unary operations: *, +, ?
     public AutomataFND unaryOperation(AutomataFND term, String op) {
         AutomataFND result = new AutomataFND(term);
+
         if (op.equals("*")) {
             Integer prefinal = result.getNumberOfStates() - 1;
             result.addFinalState("e" + result.getNumberOfStates().toString());
@@ -73,11 +74,42 @@ public class RegExpToAFND {
             result.addTransition("e" + prefinal, result.getFinalState(), "#");
             result.addTransition(result.getInitState(), result.getFinalState(), "#");
         }
+        
         return result;
     }
 
     // Operates binary operations: |, ·
-    public void binaryOperation(String termA, String termB, String op) {
+    public AutomataFND binaryOperation(AutomataFND termA, AutomataFND termB, String op) {
+        // creating and initializing a new AFND for the result:
+        AutomataFND result = new AutomataFND();
+        termB.renameStates();
+        result.addAutomataFND(termA);
+        result.addAutomataFND(termB);
+        // getting previously initial and final states:
+        String preA = termA.getInitState();
+        String preB = termB.getInitState();
+        String finA = termA.getFinalState();
+        String finB = termB.getFinalState();
+
+        if (op.equals("|")) {
+            // adding states needed (as initial and final):
+            result.addInitState("e" + result.getNumberOfStates());
+            result.addFinalState("e" + result.getNumberOfStates());
+            // adding needed transitions:
+            result.addTransition(result.getInitState(), preA, "#");
+            result.addTransition(result.getInitState(), preB, "#");
+            result.addTransition(finA, result.getFinalState(), "#");
+            result.addTransition(finB, result.getFinalState(), "#");
+        }
+        if (op.equals("·")) {
+            // no states needed to be added here! just little changes:
+            result.setInitState(preA);
+            result.setFinalState(finB);
+            // adding needed transition:
+            result.addTransition(finA, preB, "#");
+        }
+
+        return result;
     }
 
     public void TwoStacksAlgorithm(String regex) {
@@ -100,7 +132,7 @@ public class RegExpToAFND {
         autoB.setId("B");
         System.out.println(autoA);
         System.out.println(autoB);
-        AutomataFND result = test.unaryOperation(autoA, "?");
+        AutomataFND result = test.binaryOperation(autoA, autoB, "·");
         result.setId("R");
         System.out.println(result);
     }

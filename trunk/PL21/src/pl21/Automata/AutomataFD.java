@@ -52,6 +52,16 @@ public class AutomataFD extends Automata {
         }
     }
 
+    @Override
+    public boolean addInitState(String state) {
+        if (this.addState(state)) {
+            this.setInitState(state);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public boolean addTransition(String orig_state, String dest_state, String symbol) {
         if (this.graph.containsKey(orig_state) && this.graph.containsKey(dest_state)) {
             this.graph.get(orig_state).put(symbol, dest_state);
