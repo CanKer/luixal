@@ -68,6 +68,7 @@ public abstract class Automata {
     // States related methods:
     abstract boolean addState(String state);
     abstract boolean addFinalState(String state);
+    abstract boolean addInitState(String state);
     abstract boolean isState(String state);
     abstract boolean setInitState(String state);
     abstract boolean isInitState(String state);
