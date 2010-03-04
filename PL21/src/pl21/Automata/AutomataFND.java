@@ -5,8 +5,11 @@
 
 package pl21.Automata;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  *
@@ -160,24 +163,36 @@ public class AutomataFND extends Automata {
         return false;
     }
 
-    public void renameStates() {
+    public void renameStates(Integer fromValue) {
         // for now we're just adding an "'" to the state name. Better for debugging and easier to implement ;)
         HashMap<String, HashMap<String, HashSet<String>>> aux = new HashMap<String, HashMap<String, HashSet<String>>>();
         
+        // array for having a realtion between the old and the new names:
+        ArrayList<String> statesNames = new ArrayList<String>();
         for (String s:this.graph.keySet()) {
-            aux.put(s + "'", new HashMap<String, HashSet<String>>());
+            statesNames.add(s);
+        }
+
+        // renaming process (s for origin state, t for symbol and u for destination state:
+        for (String s:this.graph.keySet()) {
+            String auxState = "e" + (statesNames.indexOf(s) + fromValue);
+            aux.put(auxState, new HashMap<String, HashSet<String>>());
             for (String t:this.graph.get(s).keySet()) {
-                aux.get(s+"'").put(t, new HashSet<String>());
+                aux.get(auxState).put(t, new HashSet<String>());
                 for (String u:this.graph.get(s).get(t)) {
-                    aux.get(s+"'").get(t).add(u+"'");
+                    aux.get(auxState).get(t).add("e" + (statesNames.indexOf(u) + fromValue));
                 }
             }
         }
 
-        this.graph = new HashMap<String, HashMap<String, HashSet<String>>>(aux);
         // renaming initial and final states:
-        this.setInitState(this.getInitState() + "'");
-        this.setFinalState(this.getFinalState() + "'");
+        String initState = "e" + (statesNames.indexOf(this.getInitState()) + fromValue);
+        String finalState = "e" + (statesNames.indexOf(this.getFinalState()) + fromValue);
+        // updating graph:
+        this.graph = new HashMap<String, HashMap<String, HashSet<String>>>(aux);
+        // updating init and final states names:
+        this.setInitState(initState);
+        this.setFinalState(finalState);
     }
 
     public void addAutomataFND(AutomataFND afnd) {
@@ -223,11 +238,13 @@ public class AutomataFND extends Automata {
         afnd.addTransition("e1", "e4", "b");
         System.out.println(afnd);
         // second afnd
-        AutomataFND afnd2 = new AutomataFND("de pruebas :P");
+        AutomataFND afnd2 = new AutomataFND("de pruebas 2 :P");
         afnd2.addState("e1");
         afnd2.addState("e2");
         afnd2.addTransition("e1", "e2", "c");
         afnd2.addTransition("e1", "e2", "d");
+        afnd2.setInitState("e1");
+        afnd2.setFinalState("e2");
         System.out.println(afnd2);
 //        afnd.addState("e5");
 //        afnd.addTransition("e2", "e5", "a");
@@ -240,9 +257,7 @@ public class AutomataFND extends Automata {
 //        System.out.println(afnd);
 //        afnd.removeState("e2");
 //        System.out.println(afnd);
-        afnd2.renameStates();
+        afnd2.renameStates(8);
         System.out.println(afnd2);
-        afnd.addAutomataFND(afnd2);
-        System.out.println(afnd);
     }
 }
