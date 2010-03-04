@@ -17,31 +17,45 @@ import pl21.Automata.AutomataFND;
 public class RegExpToAFND {
 
     // list of operators, ordered from lower to higher precedence:
-    final List<String> operators = Arrays.asList("|","·","*","(",")");
+    final List<String> operators = Arrays.asList("|","·","*", "+", "?","(",")");
+    final List<String> unitaryOperators = Arrays.asList("*","+","?");
+    final List<String> binaryOperators = Arrays.asList("|","·");
 
     String regex;
     Stack<String> opStack;
-    Stack<String> termStack;
+    Stack<AutomataFND> termStack;
     
 
     RegExpToAFND() {
         this.regex = "";
         this.opStack = new Stack<String>();
-        this.termStack = new Stack<String>();
+        this.termStack = new Stack<AutomataFND>();
     }
 
     RegExpToAFND(String regex) {
         this.regex = regex;
         this.opStack = new Stack<String>();
-        this.termStack = new Stack<String>();
+        this.termStack = new Stack<AutomataFND>();
     }
 
     public boolean hasHigherPriority(String opA, String opB) {
-        return (this.operators.indexOf(opA) > this.operators.indexOf(opB));
+        return ((this.operators.indexOf(opA) > this.operators.indexOf(opB)));
+    }
+
+    public boolean isOperator(String op) {
+        return this.operators.contains(op);
+    }
+    
+    public boolean isUnaryOperator(String op) {
+        return this.unitaryOperators.contains(op);
+    }
+
+    public boolean isBinaryOperator(String op) {
+        return this.binaryOperators.contains(op);
     }
 
     // Generates a new AFND with just the term as a transition.
-    public AutomataFND unaryOperation(String term) {
+    public AutomataFND operate(String term) {
         AutomataFND afnd = new AutomataFND();
         afnd.addState("e0");
         afnd.addState("e1");
@@ -52,7 +66,7 @@ public class RegExpToAFND {
     }
 
     // Operates unary operations: *, +, ?
-    public AutomataFND unaryOperation(AutomataFND term, String op) {
+    public AutomataFND operate(AutomataFND term, String op) {
         AutomataFND result = new AutomataFND(term);
 
         if (op.equals("*")) {
@@ -79,7 +93,7 @@ public class RegExpToAFND {
     }
 
     // Operates binary operations: |, ·
-    public AutomataFND binaryOperation(AutomataFND termA, AutomataFND termB, String op) {
+    public AutomataFND operate(AutomataFND termA, AutomataFND termB, String op) {
         // creating and initializing a new AFND for the result:
         AutomataFND result = new AutomataFND();
         termB.renameStates();
@@ -112,28 +126,83 @@ public class RegExpToAFND {
         return result;
     }
 
-    public void TwoStacksAlgorithm(String regex) {
+    public AutomataFND TwoStacksAlgorithm(String regex) {
         // init variables (just in case):
         this.regex = regex;
         this.opStack = new Stack<String>();
-        this.termStack = new Stack<String>();
+        this.termStack = new Stack<AutomataFND>();
         // calling algorithm:
-        this.TwoStacksAlgorithm();
+        return this.TwoStacksAlgorithm();
     }
 
-    public void TwoStacksAlgorithm() {
+    public AutomataFND TwoStacksAlgorithm() {
+        for (int i = 0; i < this.regex.length(); i++) {
+            String input = String.valueOf(this.regex.charAt(i));
+            if (this.isOperator(input)) {
+                // stuff for operators...
+                if (this.opStack.isEmpty()) {
+                    // if the operator's stack is empty, just push the operator:
+                    this.opStack.push(input);
+                } else {
+                    // if the operator's stack is not empty, check the priority for this and the top of the stack:
+                    if (this.hasHigherPriority(input, this.opStack.peek())) {
+                        // if input has higher priority, just push the operator:
+                        this.opStack.push(input);
+                    } else {
+                        // if aux has lower priority, operate the top of the stack:
+                        String aux = this.opStack.pop();
+                        this.opStack.push(input);
+                        if (this.isUnaryOperator(aux)) {
+                            // pop term, operate and push term:
+                            this.termStack.push(this.operate(this.termStack.pop(), aux));
+                        } else {
+                            // pop term, pop term, operate and push term:
+                            AutomataFND afndB = this.termStack.pop();
+                            AutomataFND afndA = this.termStack.pop();
+                            this.termStack.push(this.operate(afndA, afndB, aux));
+                        }
+                    }
+                }
+            } else {
+                // stuff for terminals...
+                // so far let's put it in the terminals stack:
+                this.termStack.push(this.operate(input));
+            }
+        }
+
+        if (this.opStack.isEmpty()) {
+            return this.termStack.pop();
+        } else {
+            if (this.opStack.size() == 1) {
+                if (this.isUnaryOperator(this.opStack.peek())) {
+                    this.termStack.push(this.operate(this.termStack.pop(), this.opStack.pop()));
+                } else {
+                    AutomataFND afndB = this.termStack.pop();
+                    AutomataFND afndA = this.termStack.pop();
+                    this.termStack.push(this.operate(afndA, afndB, this.opStack.pop()));
+                }
+                return this.termStack.pop();
+            } else {
+                System.out.println("ERROR!! :: TwoStacksAlgorithm");
+                System.out.println("opStack: " + this.opStack.toString());
+                System.out.println("termStack: " + this.termStack.toString());
+                return new AutomataFND();
+            }
+        }
     }
 
     public static void main(String args[]) {
         RegExpToAFND test = new RegExpToAFND();
-        AutomataFND autoA = test.unaryOperation("a");
-        autoA.setId("A");
-        AutomataFND autoB = test.unaryOperation("b");
-        autoB.setId("B");
-        System.out.println(autoA);
-        System.out.println(autoB);
-        AutomataFND result = test.binaryOperation(autoA, autoB, "·");
-        result.setId("R");
-        System.out.println(result);
+//        AutomataFND autoA = test.operate("a");
+//        autoA.setId("A");
+//        AutomataFND autoB = test.operate("b");
+//        autoB.setId("B");
+//        System.out.println(autoA);
+//        System.out.println(autoB);
+//        AutomataFND result = test.operate(autoA, autoB, "·");
+//        result.setId("R");
+//        System.out.println(result);
+        AutomataFND result = test.TwoStacksAlgorithm("a·b·c");
+        System.out.println("RESULT:\n" + result);
     }
 }
