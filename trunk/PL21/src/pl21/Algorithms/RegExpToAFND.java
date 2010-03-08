@@ -70,22 +70,14 @@ public class RegExpToAFND {
         AutomataFND result = new AutomataFND(term);
 
         if (op.equals("*")) {
-            Integer prefinal = result.getNumberOfStates() - 1;
-            result.addFinalState("e" + result.getNumberOfStates().toString());
-            result.addTransition("e" + prefinal, result.getFinalState(), "#");
+            result.addInitState("e" + result.getNumberOfStates().toString());
             result.addTransition(result.getInitState(), result.getFinalState(), "#");
-            result.addTransition(result.getFinalState(), result.getInitState(), "#");
+            result.addTransition(result.getFinalState(), term.getInitState(), "#");
         }
         if (op.equals("+")) {
-            Integer prefinal = result.getNumberOfStates() - 1;
-            result.addFinalState("e" + result.getNumberOfStates().toString());
-            result.addTransition("e" + prefinal, result.getFinalState(), "#");
             result.addTransition(result.getFinalState(), result.getInitState(), "#");
         }
         if (op.equals("?")) {
-            Integer prefinal = result.getNumberOfStates() - 1;
-            result.addFinalState("e" + result.getNumberOfStates().toString());
-            result.addTransition("e" + prefinal, result.getFinalState(), "#");
             result.addTransition(result.getInitState(), result.getFinalState(), "#");
         }
         
@@ -194,6 +186,12 @@ public class RegExpToAFND {
 
     public static void main(String args[]) {
         RegExpToAFND test = new RegExpToAFND();
+        // Block for testing unitary operations:
+        AutomataFND autoA = new AutomataFND("A");
+        autoA = test.operate("a");
+        System.out.println(autoA);
+        autoA = test.operate(autoA, "*");
+        System.out.println(autoA);
 //        AutomataFND autoA = test.operate("a");
 //        autoA.setId("A");
 //        AutomataFND autoB = test.operate("b");
@@ -203,7 +201,8 @@ public class RegExpToAFND {
 //        AutomataFND result = test.operate(autoA, autoB, "·");
 //        result.setId("R");
 //        System.out.println(result);
-        AutomataFND result = test.TwoStacksAlgorithm("a·b|c");
-        System.out.println("RESULT:\n" + result);
+        //
+//        AutomataFND result = test.TwoStacksAlgorithm("(a·b)|c");
+//        System.out.println("RESULT:\n" + result);
     }
 }
