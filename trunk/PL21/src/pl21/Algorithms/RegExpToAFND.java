@@ -65,7 +65,7 @@ public class RegExpToAFND {
         return afnd;
     }
 
-    // Operates unary operations: *, +, ?
+    // Operates unary operations: '*', '+', '?'
     public AutomataFND operate(AutomataFND term, String op) {
         AutomataFND result = new AutomataFND(term);
 
@@ -84,36 +84,36 @@ public class RegExpToAFND {
         return result;
     }
 
-    // Operates binary operations: |, ·
+    // Operates binary operations: '|', '·'
     public AutomataFND operate(AutomataFND termA, AutomataFND termB, String op) {
         // creating and initializing a new AFND for the result:
-        AutomataFND result = new AutomataFND();
-        termA.renameStates(0);
-        termB.renameStates(termA.getNumberOfStates());
-        result.addAutomataFND(termA);
-        result.addAutomataFND(termB);
-        // getting previously initial and final states:
-        String preA = termA.getInitState();
-        String preB = termB.getInitState();
-        String finA = termA.getFinalState();
-        String finB = termB.getFinalState();
+        AutomataFND result = new AutomataFND(termA);
+        AutomataFND auxB = new AutomataFND(termB);
+        // renaming states for keeping some order:
+        result.renameStates(0);
+        auxB.renameStates(result.getNumberOfStates());
 
-        if (op.equals("|")) {
-            // adding states needed (as initial and final):
-            result.addInitState("e" + result.getNumberOfStates());
-            result.addFinalState("e" + result.getNumberOfStates());
-            // adding needed transitions:
-            result.addTransition(result.getInitState(), preA, "#");
-            result.addTransition(result.getInitState(), preB, "#");
-            result.addTransition(finA, result.getFinalState(), "#");
-            result.addTransition(finB, result.getFinalState(), "#");
-        }
         if (op.equals("·")) {
-            // no states needed to be added here! just little changes:
-            result.setInitState(preA);
-            result.setFinalState(finB);
-            // adding needed transition:
-            result.addTransition(finA, preB, "#");
+            String newname = result.getFinalState() + auxB.getInitState();
+            result.renameState(result.getFinalState(), newname);
+            auxB.renameState(auxB.getInitState(), newname);
+            result.mergeAutomataFND(auxB);
+            // setting final state:
+            result.setFinalState(auxB.getFinalState());
+        }
+        if (op.equals("|")) {
+            String newname = result.getInitState() + auxB.getInitState();
+            result.renameState(result.getInitState(), newname);
+            auxB.renameState(auxB.getInitState(), newname);
+            // keeeping final states as we need them after the merge:
+            String preFinalA = result.getFinalState();
+            String preFinalB = auxB.getFinalState();
+            result.mergeAutomataFND(auxB);
+            // adding new final state and lambda ('#') transitions:
+            String newstate = "e" + result.getNumberOfStates();
+            result.addFinalState(newstate);
+            result.addTransition(preFinalA, newstate, "#");
+            result.addTransition(preFinalB, newstate, "#");
         }
 
         return result;
@@ -186,12 +186,21 @@ public class RegExpToAFND {
 
     public static void main(String args[]) {
         RegExpToAFND test = new RegExpToAFND();
-        // Block for testing unitary operations:
+        // Block for first automata 'A'
         AutomataFND autoA = new AutomataFND("A");
         autoA = test.operate("a");
         System.out.println(autoA);
-        autoA = test.operate(autoA, "*");
-        System.out.println(autoA);
+        // Testing unitary ops:
+//        autoA = test.operate(autoA, "*");
+//        System.out.println(autoA);
+        // Block for second automata 'B':
+        AutomataFND autoB = new AutomataFND("B");
+        autoB = test.operate("b");
+        System.out.println(autoB);
+        // Block for testing binary operations:
+        AutomataFND result = new AutomataFND("R");
+        result = test.operate(autoA, autoB, "|");
+        System.out.println(result);
 //        AutomataFND autoA = test.operate("a");
 //        autoA.setId("A");
 //        AutomataFND autoB = test.operate("b");

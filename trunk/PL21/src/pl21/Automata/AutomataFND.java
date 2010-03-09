@@ -175,6 +175,9 @@ public class AutomataFND extends Automata {
     }
 
     public boolean renameState(String oldName, String newName) {
+        while (this.graph.containsKey(newName)) {
+            newName = newName + "'";
+        }
         // replacing old state and transitions from it:
         if (this.graph.keySet().contains(oldName)) {
             // add new state with outgoing transitions from the old one:
