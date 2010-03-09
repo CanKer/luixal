@@ -6,10 +6,8 @@
 package pl21.Automata;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 
 /**
  *
@@ -164,45 +162,76 @@ public class AutomataFND extends Automata {
     }
 
     public void renameStates(Integer fromValue) {
-        // for now we're just adding an "'" to the state name. Better for debugging and easier to implement ;)
-        HashMap<String, HashMap<String, HashSet<String>>> aux = new HashMap<String, HashMap<String, HashSet<String>>>();
         
         // array for having a realtion between the old and the new names:
         ArrayList<String> statesNames = new ArrayList<String>();
         for (String s:this.graph.keySet()) {
             statesNames.add(s);
         }
-
         // renaming process (s for origin state, t for symbol and u for destination state:
-        for (String s:this.graph.keySet()) {
-            String auxState = "e" + (statesNames.indexOf(s) + fromValue);
-            aux.put(auxState, new HashMap<String, HashSet<String>>());
-            for (String t:this.graph.get(s).keySet()) {
-                aux.get(auxState).put(t, new HashSet<String>());
-                for (String u:this.graph.get(s).get(t)) {
-                    aux.get(auxState).get(t).add("e" + (statesNames.indexOf(u) + fromValue));
+        for (int i = 0; i < statesNames.size(); i++) {
+            System.out.println("Replacing " + statesNames.get(i) + " with " + "e" + (i + fromValue) + "..." + this.renameState(statesNames.get(i), "e" + (i + fromValue)));
+        }
+    }
+
+    public boolean renameState(String oldName, String newName) {
+        // replacing old state and transitions from it:
+        if (this.graph.keySet().contains(oldName)) {
+            // add new state with outgoing transitions from the old one:
+            this.graph.put(newName, this.graph.get(oldName));
+            // removing the old state:
+            this.graph.remove(oldName);
+            // replacing old state incoming transitions:
+            for (String s:this.graph.keySet()) {
+                for (String t:this.graph.get(s).keySet()) {
+                    if (this.graph.get(s).get(t).contains(oldName)) {
+                        // adding new state name.
+                        this.graph.get(s).get(t).add(newName);
+                        // removing old state name:
+                        this.graph.get(s).get(t).remove(oldName);
+                    }
                 }
             }
+            // setting init/final state if needed:
+            if (this.init_state.equals(oldName)) this.init_state = newName;
+            if (this.final_state.equals(oldName)) this.final_state = newName;
+            // too much commented i think... well, let's say it's for dummies ;)
+            return true;
+        } else {
+            return false;
         }
-
-        // renaming initial and final states:
-        String initState = "e" + (statesNames.indexOf(this.getInitState()) + fromValue);
-        String finalState = "e" + (statesNames.indexOf(this.getFinalState()) + fromValue);
-        // updating graph:
-        this.graph = new HashMap<String, HashMap<String, HashSet<String>>>(aux);
-        // updating init and final states names:
-        this.setInitState(initState);
-        this.setFinalState(finalState);
     }
 
     public void addAutomataFND(AutomataFND afnd) {
         // adding the alphabet:
-        for (String s:afnd.getAlphabet()) {
-            this.alphabet.add(s);
-        }
+        this.alphabet.addAll(afnd.getAlphabet());
         // adding states and transitions:
+        this.graph.putAll(afnd.getGraph());
+    }
+
+    public void mergeAutomataFND(AutomataFND afnd) {
+        // merging alphabet:
+//        for (String s:afnd.getAlphabet()) {
+//            this.alphabet.add(s);
+//        }
+        this.alphabet.addAll(afnd.getAlphabet());
+        // merging states and transitions:
         for (String s:afnd.getGraph().keySet()) {
-            this.graph.put(s, afnd.getGraph().get(s));
+            if (this.graph.keySet().contains(s)) {
+                // merging here:
+                for (String t:afnd.getGraph().get(s).keySet()) {
+                    if (this.graph.get(s).containsKey(t)) {
+                        // merge destination states here:
+                        this.graph.get(s).get(t).addAll(afnd.getGraph().get(s).get(t));
+                    } else {
+                        // just add symbol and destination states:
+                        this.graph.get(s).put(t, afnd.getGraph().get(s).get(t));
+                    }
+                }
+            } else {
+                // just adding state:
+                this.graph.put(s, afnd.getGraph().get(s));
+            }
         }
     }
 
@@ -227,37 +256,47 @@ public class AutomataFND extends Automata {
     }
 
     public static void main(String[] args) {
-        AutomataFND afnd = new AutomataFND("de pruebas :P");
+        AutomataFND afnd = new AutomataFND("AP1");
         afnd.addState("e1");
         afnd.addState("e2");
-        afnd.addState("e3");
-        afnd.addState("e4");
+//        afnd.addState("e3");
+//        afnd.addState("e4");
+        afnd.setInitState("e1");
+        afnd.setFinalState("e2");
         afnd.addTransition("e1", "e2", "a");
-        afnd.addTransition("e1", "e2", "b");
-        afnd.addTransition("e1", "e3", "a");
-        afnd.addTransition("e1", "e4", "b");
+//        afnd.addTransition("e1", "e2", "b");
+//        afnd.addTransition("e1", "e3", "a");
+//        afnd.addTransition("e1", "e4", "b");
         System.out.println(afnd);
+        // Testing renameState:
+//        System.out.println("Renaming state... " + afnd.renameState("e3", "e33"));
+//        System.out.println(afnd);
+//        afnd.renameStates(10);
+//        System.out.println(afnd);
         // second afnd
-        AutomataFND afnd2 = new AutomataFND("de pruebas 2 :P");
+        AutomataFND afnd2 = new AutomataFND("AP2");
         afnd2.addState("e1");
         afnd2.addState("e2");
         afnd2.addTransition("e1", "e2", "c");
-        afnd2.addTransition("e1", "e2", "d");
+//        afnd2.addTransition("e1", "e2", "d");
         afnd2.setInitState("e1");
         afnd2.setFinalState("e2");
         System.out.println(afnd2);
-//        afnd.addState("e5");
-//        afnd.addTransition("e2", "e5", "a");
-//        afnd.addTransition("e2", "e5", "b");
-//        afnd.addTransition("e2", "e5", "c");
-//        afnd.setFinalState("e5");
-//        afnd.setInitState("e1");
-//        System.out.println(afnd);
-//        afnd.removeTransition("e2", "e5", "a");
-//        System.out.println(afnd);
-//        afnd.removeState("e2");
-//        System.out.println(afnd);
-        afnd2.renameStates(8);
-        System.out.println(afnd2);
+        System.out.println("Renaming states in AP1 to e1X...");
+        afnd.renameStates(10);
+        System.out.println("Renaming states in AP2 to e2X...");
+        afnd2.renameStates(20);
+        System.out.println("Showing:\n" + afnd + "\n\n" + afnd2);
+        String newname = (afnd.getFinalState() + afnd2.getInitState());
+        System.out.println("Renaming " + afnd.getFinalState() + " to " + newname + " and " + afnd2.getInitState() + " to " + newname + "...");
+        afnd.renameState(afnd.getFinalState(), newname);
+        afnd2.renameState(afnd2.getInitState(), newname);
+        System.out.println("Showing:\n" + afnd + "\n\n" + afnd2);
+        System.out.println("Merging both automatas...");
+        afnd.mergeAutomataFND(afnd2);
+        afnd.setFinalState(afnd2.getFinalState());
+        System.out.println("showing result:\n\n" + afnd);
+//        afnd2.renameStates(8);
+//        System.out.println(afnd2);
     }
 }
