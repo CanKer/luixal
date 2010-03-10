@@ -78,7 +78,7 @@ public abstract class Automata {
     abstract Integer getNumberOfStates();
 
     // Alphabet related methods:
-    protected HashSet<String> getAlphabet() {
+    public HashSet<String> getAlphabet() {
         return this.alphabet;
     }
 

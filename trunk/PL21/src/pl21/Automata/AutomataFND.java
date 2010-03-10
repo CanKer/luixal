@@ -170,7 +170,7 @@ public class AutomataFND extends Automata {
         }
         // renaming process (s for origin state, t for symbol and u for destination state:
         for (int i = 0; i < statesNames.size(); i++) {
-            System.out.println("Replacing " + statesNames.get(i) + " with " + "e" + (i + fromValue) + "..." + this.renameState(statesNames.get(i), "e" + (i + fromValue)));
+            this.renameState(statesNames.get(i), "e" + (i + fromValue));
         }
     }
 
