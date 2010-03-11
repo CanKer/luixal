@@ -133,7 +133,7 @@ public class RegExpToAFND {
             String preFinalB = auxB.getFinalState();
             result.mergeAutomataFND(auxB);
             // adding new final state and lambda ('#') transitions:
-            String newstate = "e" + result.getNumberOfStates();
+            String newstate = "e" + (result.getNumberOfStates() + 1);
             result.addFinalState(newstate);
             result.addTransition(preFinalA, newstate, "#");
             result.addTransition(preFinalB, newstate, "#");
@@ -184,26 +184,28 @@ public class RegExpToAFND {
     }
 
     public void reformatRange() {
-        String substring = this.regex.substring(this.regex.indexOf("["), this.regex.indexOf("]"));
-        System.out.println("Substsring to reformat: " + substring);
-        String newsubstring = String.valueOf(substring.charAt(0));
-        char previous = '-';
-        for (int i = 1; i < substring.length(); i++) {
-            char aux = substring.charAt(i);
-            if (previous != '-') {
-                if (aux != '-') {
-                    newsubstring += "|" + aux;
+        if (this.regex.contains("[")) {
+            String substring = this.regex.substring(this.regex.indexOf("["), this.regex.indexOf("]"));
+            System.out.println("Substsring to reformat: " + substring);
+            String newsubstring = String.valueOf(substring.charAt(0));
+            char previous = '-';
+            for (int i = 1; i < substring.length(); i++) {
+                char aux = substring.charAt(i);
+                if (previous != '-') {
+                    if (aux != '-') {
+                        newsubstring += "|" + aux;
+                    } else {
+                        newsubstring += aux;
+                    }
                 } else {
                     newsubstring += aux;
                 }
-            } else {
-                newsubstring += aux;
+                previous = substring.charAt(i);
             }
-            previous = substring.charAt(i);
+            // replacing substring in regex:
+            this.regex = this.regex.replace(substring, newsubstring);
+            System.out.println("New regex: " + this.regex + " after replacing with: " + newsubstring);
         }
-        // replacing substring in regex:
-        this.regex = this.regex.replace(substring, newsubstring);
-        System.out.println("New regex: " + this.regex + " after replacing with: " + newsubstring);
     }
 
     public AutomataFND TwoStacksAlgorithm() {
@@ -257,21 +259,25 @@ public class RegExpToAFND {
         if (this.opStack.isEmpty()) {
             return this.termStack.pop();
         } else {
-            if (this.opStack.size() == 1) {
-                if (this.isUnaryOperator(this.opStack.peek())) {
-                    this.termStack.push(this.operate(this.termStack.pop(), this.opStack.pop()));
-                } else {
-                    AutomataFND afndB = this.termStack.pop();
-                    AutomataFND afndA = this.termStack.pop();
-                    this.termStack.push(this.operate(afndA, afndB, this.opStack.pop()));
-                }
-                return this.termStack.pop();
-            } else {
-                System.out.println("ERROR!! :: TwoStacksAlgorithm");
-                System.out.println("opStack: " + this.opStack.toString());
-                System.out.println("termStack: " + this.termStack.toString());
-                return new AutomataFND();
+            while (!this.opStack.isEmpty()) {
+                this.OperateTopOfStack();
             }
+            return this.termStack.pop();
+//            if (this.opStack.size() == 1) {
+//                if (this.isUnaryOperator(this.opStack.peek())) {
+//                    this.termStack.push(this.operate(this.termStack.pop(), this.opStack.pop()));
+//                } else {
+//                    AutomataFND afndB = this.termStack.pop();
+//                    AutomataFND afndA = this.termStack.pop();
+//                    this.termStack.push(this.operate(afndA, afndB, this.opStack.pop()));
+//                }
+//                return this.termStack.pop();
+//            } else {
+//                System.out.println("ERROR!! :: TwoStacksAlgorithm");
+//                System.out.println("opStack: " + this.opStack.toString());
+//                System.out.println("termStack: " + this.termStack.toString());
+//                return new AutomataFND();
+//            }
         }
     }
 
@@ -305,7 +311,10 @@ public class RegExpToAFND {
 //        System.out.println(result);
         // Block for testing TwoStacksAlgorithm:
 //        AutomataFND result = test.TwoStacksAlgorithm("a·(b|c)·(b·c)");
-        AutomataFND result = test.TwoStacksAlgorithm("[a-dA-D_]·(a|b)");
+        AutomataFND result = test.TwoStacksAlgorithm("a*·b");
         System.out.println("RESULT:\n" + result);
+        ShowingGraphs sg = new ShowingGraphs(result);
+        sg.generateFile();
+        sg.show();
     }
 }
