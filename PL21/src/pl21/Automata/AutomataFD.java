@@ -5,6 +5,7 @@
 
 package pl21.Automata;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -135,9 +136,50 @@ public class AutomataFD extends Automata {
         }
     }
 
+    public boolean renameStates(Integer fromValue) {
+        boolean r = true;
+        ArrayList<String> states = new ArrayList<String>();
+        states.addAll(this.graph.keySet());
+
+        Integer counter = 0;
+        while (r == true && counter < states.size()) {
+            r = this.renameState(states.get(counter), "e" + (counter + fromValue));
+            counter++;
+            System.out.println(counter);
+        }
+        return r;
+    }
+
+    public boolean renameState(String oldName, String newName) {
+        while (this.graph.containsKey(newName)) {
+            newName += "'";
+        }
+        if (this.graph.containsKey(oldName)) {
+            this.graph.put(newName, this.graph.get(oldName));
+            this.graph.remove(oldName);
+
+            for (String s:this.graph.keySet()) {
+                for (String t:this.graph.get(s).keySet()) {
+                    if (this.graph.get(s).get(t).equals(oldName)) {
+                        this.graph.get(s).put(t, newName);
+                    }
+                }
+            }
+            if (this.init_state.equals(oldName)) this.init_state = newName;
+            if (this.final_state.equals(oldName)) this.final_state = newName;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public Integer getNumberOfStates() {
         return this.graph.size();
+    }
+
+    public HashMap<String, HashMap<String, String>> getGraph() {
+        return this.graph;
     }
 
     @Override
@@ -201,4 +243,5 @@ public class AutomataFD extends Automata {
         afd.removeState("e4");
         System.out.println(afd);
     }
+
 }

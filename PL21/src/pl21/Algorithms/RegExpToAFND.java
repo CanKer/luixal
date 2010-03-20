@@ -311,7 +311,9 @@ public class RegExpToAFND {
 //        System.out.println(result);
         // Block for testing TwoStacksAlgorithm:
 //        AutomataFND result = test.TwoStacksAlgorithm("a·(b|c)·(b·c)");
-        AutomataFND result = test.TwoStacksAlgorithm("a*·b");
+        AutomataFND result = test.TwoStacksAlgorithm("(a|b)*·a·b·b");
+        result.renameStates(result.getNumberOfStates() + 1);
+        result.renameStates(0);
         System.out.println("RESULT:\n" + result);
         ShowingGraphs sg = new ShowingGraphs(result);
         sg.generateFile();

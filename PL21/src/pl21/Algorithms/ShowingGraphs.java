@@ -6,9 +6,7 @@
 package pl21.Algorithms;
 
 import java.io.File;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
+import pl21.Automata.AutomataFD;
 import pl21.Automata.AutomataFND;
 
 /**
@@ -18,15 +16,26 @@ import pl21.Automata.AutomataFND;
 public class ShowingGraphs {
 
     AutomataFND graph;
-
-    JLabel label;
-    ImageIcon imgicon;
+    AutomataFD graphFD;
 
     public ShowingGraphs(AutomataFND graph) {
-        this.graph = graph;
+        this.graph = new AutomataFND(graph);
+        this.graphFD = null;
+    }
+
+    public ShowingGraphs(AutomataFD graph) {
+        this.graphFD = new AutomataFD(graph);
+        this.graph = null;
     }
 
     public String convertGraphToDotFormat() {
+        if (this.graph == null) {
+            return this.convertGraphFDToDotFormat();
+        } else {
+            return this.convertGraphFNDToDotFormat();
+        }
+    }
+    public String convertGraphFNDToDotFormat() {
         String result = "digraph graph_name_here {\n";
         result += "\trankdir=LR;\n";
         result += "\tsize=" + '"' + "8,5" + '"' + ";\n";
@@ -45,19 +54,46 @@ public class ShowingGraphs {
         return result;
     }
 
+    public String convertGraphFDToDotFormat() {
+        String result = "digraph graph_name_here {\n";
+        result += "\trankdir=LR;\n";
+        result += "\tsize=" + '"' + "8,5" + '"' + ";\n";
+        result += "\tnode [shape = doublecircle]; " + this.graphFD.getFinalState() + ";\n";
+        result += "\tnode [shape = square]; " + this.graphFD.getInitState() + ";\n";
+        result += "\tnode [shape = circle];\n\n";
+        for (String initState:this.graphFD.getGraph().keySet()) {
+            for (String symbol:this.graphFD.getGraph().get(initState).keySet()) {
+                result += "\t" + initState + " -> " + this.graphFD.getGraph().get(initState).get(symbol) + " [ label = " + '"' + symbol + '"' + " ];\n";
+            }
+        }
+
+        result += "}\n";
+        return result;
+    }
+
     public void generateFile() {
         GraphViz gv = new GraphViz();
         gv.addln(this.convertGraphToDotFormat());
         System.out.println(gv.getDotSource());
 
-        File out = new File("out.png");
+        String filename = "";
+        if (this.graph != null) {
+            filename = "outFND.png";
+        } else {
+            filename = "outFD.png";
+        }
+        File out = new File(filename);
         gv.writeGraphToFile(gv.getGraph(gv.getDotSource()), out);
         System.out.println(out.getAbsolutePath());
     }
 
     public void show() {
         Frame frame = new Frame();
-        frame.setImage("/home/nemesis/development/googlecode/luixal/PL21/out.png");
+        if (this.graph != null) {
+            frame.setImage("/home/nemesis/development/googlecode/luixal/PL21/outFND.png");
+        } else {
+            frame.setImage("/home/nemesis/development/googlecode/luixal/PL21/outFD.png");
+        }
         frame.setVisible(true);
     }
 
