@@ -242,6 +242,14 @@ public class AutomataFND extends Automata {
         return this.graph;
     }
 
+    public HashSet<String> transitionsTo(String orig_state, String symbol) {
+        if (this.graph.containsKey(orig_state) && this.graph.get(orig_state).containsKey(symbol)) {
+            return this.graph.get(orig_state).get(symbol);
+        } else {
+            return new HashSet<String>();
+        }
+    }
+
     @Override
     public String toString() {
         String aux = this.id + "\n";
