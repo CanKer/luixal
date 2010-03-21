@@ -107,7 +107,10 @@ public class AFNDtoAFD {
                         this.afd.addState(this.generateStateName(U));
                     }
                     this.afd.addTransition(this.generateStateName(T), this.generateStateName(U), s);
-                    if (U.contains(this.afnd.getFinalState())) this.afd.setFinalState(this.generateStateName(U));
+                    if (U.contains(this.afnd.getFinalState())) {
+                        this.afd.setFinalState(this.generateStateName(U));
+                        this.afd.addFinalStates(U);
+                    }
                 }
             }
         }

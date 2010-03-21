@@ -7,6 +7,7 @@ package pl21.Automata;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  *
@@ -17,21 +18,25 @@ import java.util.HashMap;
 public class AutomataFD extends Automata {
 
     private HashMap<String, HashMap<String, String>> graph;
+    private HashSet<String> finalStates;
 
     public AutomataFD() {
         super();
         this.id += this.id + " - AFD";
         this.graph = new HashMap<String, HashMap<String, String>>();
+        this.finalStates = new HashSet<String>();
     }
 
     public AutomataFD(String id) {
         super(id);
         this.graph = new HashMap<String, HashMap<String, String>>();
+        this.finalStates = new HashSet<String>();
     }
 
     public AutomataFD(AutomataFD afd) {
         super(afd);
         this.graph = new HashMap<String, HashMap<String, String>>(afd.graph);
+        this.finalStates = new HashSet<String>(afd.getFinalStates());
     }
 
     public boolean addState(String state) {
@@ -47,9 +52,16 @@ public class AutomataFD extends Automata {
     public boolean addFinalState(String state) {
         if (this.addState(state)) {
             this.setFinalState(state);
+            this.finalStates.add(state);
             return true;
         } else {
             return false;
+        }
+    }
+
+    public void addFinalStates(HashSet<String> states) {
+        if (this.graph.keySet().containsAll(states)) {
+            this.finalStates.addAll(states);
         }
     }
 
@@ -77,7 +89,8 @@ public class AutomataFD extends Automata {
     public boolean clearAll() {
         if (super.clearAll()) {
             this.graph.clear();
-            return (this.graph.size() == 0);
+            this.finalStates.clear();
+            return (this.graph.size() == 0 && this.finalStates.size() == 0);
         }
         return false;
     }
@@ -106,6 +119,7 @@ public class AutomataFD extends Automata {
     public boolean setFinalState(String state) {
         if (this.graph.containsKey(state)) {
             this.final_state = state;
+            this.finalStates.add(state);
             return true;
         } else {
             return false;
@@ -114,7 +128,7 @@ public class AutomataFD extends Automata {
 
     @Override
     public boolean isFinalState(String state) {
-        return this.final_state.equals(state);
+        return this.finalStates.contains(state);
     }
 
     @Override
@@ -122,6 +136,7 @@ public class AutomataFD extends Automata {
         if (this.graph.containsKey(state)) {
             // removing entries for 'state':
             this.graph.remove(state);
+            this.finalStates.remove(state);
             // removing transitions going to 'state':
             for (String i:this.graph.keySet()) {
                 for (String j:this.graph.get(i).keySet()) {
@@ -167,6 +182,10 @@ public class AutomataFD extends Automata {
             }
             if (this.init_state.equals(oldName)) this.init_state = newName;
             if (this.final_state.equals(oldName)) this.final_state = newName;
+            if (this.finalStates.contains(oldName)) {
+                this.finalStates.remove(oldName);
+                this.finalStates.add(newName);
+            }
             return true;
         } else {
             return false;
@@ -184,10 +203,14 @@ public class AutomataFD extends Automata {
 
     @Override
     public boolean removeTransition(String orig_state, String dest_state, String symbol) {
-        if (this.graph.containsKey(orig_state) && this.graph.get(orig_state).containsKey(symbol)) {
+        if (this.graph.containsKey(orig_state) && this.graph.get(orig_state).containsKey(symbol) && this.graph.get(orig_state).get(symbol).equals(dest_state)) {
                 return (this.graph.get(orig_state).remove(symbol) != null);
         }
         return false;
+    }
+
+    private HashSet<String> getFinalStates() {
+        return this.finalStates;
     }
 
     @Override
@@ -195,6 +218,7 @@ public class AutomataFD extends Automata {
         String aux = this.id + "\n";
         aux += "Alphabet: " + this.alphabet.toString() + "\n";
         aux += "States: " + this.graph.keySet().toString() + "\n";
+        aux += "Final States: " + this.finalStates.toString() + "\n";
         for (String state:this.graph.keySet()) {
             aux += "State: " + state + ":\n";
             for (String symbol:this.graph.get(state).keySet()) {
@@ -218,9 +242,11 @@ public class AutomataFD extends Automata {
         System.out.println("DONE!");
         System.out.print("\tState 'e3'... ");
         afd.addState("e3");
+        afd.setFinalState("e3");
         System.out.println("DONE!");
         System.out.print("\tState 'e4'... ");
         afd.addState("e4");
+        afd.setFinalState("e4");
         System.out.println("DONE!");
         System.out.println("Adding transitions:");
         System.out.print("Transition from 'e1' to 'e2' through symbol 'a'... ");

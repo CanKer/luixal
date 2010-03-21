@@ -5,8 +5,7 @@
 
 package pl21.Algorithms;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import pl21.Automata.AutomataFD;
 
 /**
@@ -16,28 +15,28 @@ import pl21.Automata.AutomataFD;
 public class AFDtoAFDmin {
 
     AutomataFD afd;
-    ArrayList<HashSet<String>> partition;
+    HashMap<String, Integer> partition;
 
     public AFDtoAFDmin(AutomataFD afd) {
         this.afd = new AutomataFD(afd);
-        this.partition = new ArrayList<HashSet<String>>();
+        this.partition = new HashMap<String, Integer>();
     }
 
     // checks if two partitions are equals:
-    public boolean equalsPartition(ArrayList<HashSet<String>> p) {
+    public boolean equalsPartition(HashMap<String, Integer> p) {
         return false;
     }
 
     // builds the initial partition from the AFD:
-    public ArrayList<HashSet<String>> initPartition() {
-        ArrayList<HashSet<String>> newPartition = new ArrayList<HashSet<String>>();
+    public HashMap<String, Integer> initPartition() {
+        HashMap<String, Integer> newPartition = new HashMap<String, Integer>();
         // first group (terminals one):
         return newPartition;
     }
 
     // builds a new partition from the one existant:
-    public ArrayList<HashSet<String>> rePartition() {
-        ArrayList<HashSet<String>> newPartition = new ArrayList<HashSet<String>>();
+    public HashMap<String, Integer> rePartition() {
+        HashMap<String, Integer> newPartition = new HashMap<String, Integer>();
         return newPartition;
     }
 
