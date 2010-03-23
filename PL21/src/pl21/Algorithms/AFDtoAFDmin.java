@@ -33,7 +33,7 @@ public class AFDtoAFDmin {
     // builds the initial partition from the AFD:
     public void initPartition() {
         // first group (non-terminal's one):
-        for (String s:this.afd.getNonTerminalStates()) {
+        for (String s:this.afd.getNonFinalStates()) {
             this.partition.put(s, 0);
         }
         // second group (terminal's one):
