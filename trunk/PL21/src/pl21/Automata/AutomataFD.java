@@ -209,8 +209,18 @@ public class AutomataFD extends Automata {
         return false;
     }
 
-    private HashSet<String> getFinalStates() {
+    public HashSet<String> getFinalStates() {
         return this.finalStates;
+    }
+
+    public HashSet<String> getStatesReachableFrom(String fromState) {
+        return new HashSet<String>(this.graph.get(fromState).values());
+    }
+
+    public HashSet<String> getNonTerminalStates() {
+        HashSet<String> aux = new HashSet<String>(this.graph.keySet());
+        aux.removeAll(this.finalStates);
+        return aux;
     }
 
     @Override
@@ -263,6 +273,9 @@ public class AutomataFD extends Automata {
         System.out.println("DONE!");
         System.out.println("\n\nNow showing the automata (toString test :P):");
         System.out.println(afd);
+        System.out.println("States reachable from e2: " + afd.getStatesReachableFrom("e2"));
+        System.out.println("Non-Terminal states: " + afd.getNonTerminalStates());
+        System.out.println("Terminal States: " + afd.getFinalStates());
         System.out.println("Removing transition (e4,b,e3):" + afd.removeTransition("e4", "e3", "b"));
         System.out.println(afd);
         System.out.println("Removing state 'e4'. This should also remove transitions (e2,a,e4) and (e4,b,e3), let's see...");
