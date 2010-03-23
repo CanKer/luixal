@@ -14,24 +14,33 @@ import pl21.Automata.AutomataFD;
  */
 public class AFDtoAFDmin {
 
-    AutomataFD afd;
-    HashMap<String, Integer> partition;
+    private AutomataFD afd;
+    private HashMap<String, Integer> partition;
+    private Integer numSets;
 
     public AFDtoAFDmin(AutomataFD afd) {
         this.afd = new AutomataFD(afd);
         this.partition = new HashMap<String, Integer>();
+        this.initPartition();
+        this.numSets = this.partition.size();
     }
 
     // checks if two partitions are equals:
     public boolean equalsPartition(HashMap<String, Integer> p) {
-        return false;
+        return this.partition.equals(p);
     }
 
     // builds the initial partition from the AFD:
-    public HashMap<String, Integer> initPartition() {
-        HashMap<String, Integer> newPartition = new HashMap<String, Integer>();
-        // first group (terminals one):
-        return newPartition;
+    public void initPartition() {
+        // first group (non-terminal's one):
+        for (String s:this.afd.getNonTerminalStates()) {
+            this.partition.put(s, 0);
+        }
+        // second group (terminal's one):
+        for(String s:this.afd.getFinalStates()) {
+            this.partition.put(s, 1);
+        }
+        this.numSets = this.partition.size();
     }
 
     // builds a new partition from the one existant:
