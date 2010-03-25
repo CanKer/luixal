@@ -223,6 +223,10 @@ public class AutomataFD extends Automata {
         return aux;
     }
 
+    public HashMap<String, String> getTranstitionsFrom(String state) {
+        return this.graph.get(state);
+    }
+
     @Override
     public String toString() {
         String aux = this.id + "\n";
