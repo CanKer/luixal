@@ -94,16 +94,50 @@ public class AFDtoAFDmin {
     // builds the new AFD from the partition:
     public void buildNewAFD() {
         AutomataFD newAFD = new AutomataFD();
-        // select representant states:
+        HashMap<Integer, String> representantStates = new HashMap<Integer, String>();
+        // select representant states setting init and final states:
+        for (HashSet hs:this.partition) {
+            Iterator it = hs.iterator();
+            String state = (String) it.next();
+            representantStates.put(this.stateInGroup(state), state);
+            newAFD.addState(state);
+            // set as init state:
+            if (hs.contains(this.afd.getInitState())) {
+                newAFD.setInitState(state);
+            }
+            // set as final state:
+            if (this.afd.isFinalState(state)) {
+                newAFD.setFinalState(state);
+            }
+        }
         // build newAFD using representant states
-        // set init state and final states
-        // purge the newAFD
+        for (String state:newAFD.getStates()) {
+            HashMap<String, Integer> transitions = new HashMap<String, Integer>(this.stateToGroup(state));
+            for (String symbol:transitions.keySet()) {
+                newAFD.addTransition(state, representantStates.get(transitions.get(symbol)), symbol);
+                
+            }
+        }
+        this.purgeAFD();
+        this.afd = new AutomataFD(newAFD);
     }
 
     // removes inactive states, unreachable states and undefined transitions:
     public void purgeAFD() {
         // remove inactive states
+        for (String state:this.afd.getNonFinalStates()) {
+            boolean inactive = true;
+            for (String s:this.afd.getTranstitionsFrom(state).keySet()) {
+                inactive = inactive && this.afd.getTranstitionsFrom(state).get(s).equals(state);
+            }
+            if (inactive) {
+                this.afd.removeState(state);
+            }
+        }
         // remove unreachable states
+        for (String state:this.afd.getStates()) {
+            if (!this.afd.stateReachableFrom(this.afd.getInitState(), state)) this.afd.removeState(state);
+        }
     }
 
     // the minimization algorithm:
@@ -119,6 +153,10 @@ public class AFDtoAFDmin {
             System.out.println("Iteration " + aux + ":\n\tP: " + this.partition + "\n\tP': " + p2);
             aux++;
         }
+    }
+
+    public AutomataFD getAFD() {
+        return this.afd;
     }
 
     public static void main(String[] args) {
@@ -137,5 +175,8 @@ public class AFDtoAFDmin {
         System.out.println("\n\nStarting Minimizer.\n");
         AFDtoAFDmin minimizer = new AFDtoAFDmin(afd);
         minimizer.minimize();
+        minimizer.buildNewAFD();
+        ShowingGraphs sgFD = new ShowingGraphs(minimizer.getAFD());
+        sgFD.generateFile();
     }
 }

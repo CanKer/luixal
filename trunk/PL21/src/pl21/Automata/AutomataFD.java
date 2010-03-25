@@ -213,6 +213,11 @@ public class AutomataFD extends Automata {
         return this.finalStates;
     }
 
+    public HashSet<String> getStates() {
+//        return (HashSet<String>) this.graph.keySet();
+        return new HashSet<String>(this.graph.keySet());
+    }
+
     public HashSet<String> getStatesReachableFrom(String fromState) {
         return new HashSet<String>(this.graph.get(fromState).values());
     }
@@ -225,6 +230,23 @@ public class AutomataFD extends Automata {
 
     public HashMap<String, String> getTranstitionsFrom(String state) {
         return this.graph.get(state);
+    }
+
+    public boolean stateReachableFrom(String orig_state, String dest_state) {
+        if (orig_state.equals(dest_state)) return true;
+        if (this.isState(orig_state) && this.isState(dest_state)) {
+            if (this.getStatesReachableFrom(orig_state).contains(dest_state)) {
+                return true;
+            } else {
+                boolean r = false;
+                for (String s:this.getStatesReachableFrom(orig_state)) {
+                    r = r || this.stateReachableFrom(s, dest_state);
+                }
+                return r;
+            }
+        } else {
+            return false;
+        }
     }
 
     @Override
