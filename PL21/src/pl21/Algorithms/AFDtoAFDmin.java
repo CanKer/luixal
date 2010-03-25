@@ -27,11 +27,6 @@ public class AFDtoAFDmin {
         this.initPartition();
     }
 
-    // checks if two partitions are equals:
-    public boolean equalsPartition(ArrayList<HashSet<String>> p) {
-        return this.partition.equals(p);
-    }
-
     // builds the initial partition from the AFD:
     public void initPartition() {
         // first group (non-terminal's one):
@@ -70,20 +65,27 @@ public class AFDtoAFDmin {
         HashMap<HashMap<String,Integer>, Integer> groupsIndex = new HashMap<HashMap<String,Integer>, Integer>();
 
         for (HashSet group:this.partition) {
-            Iterator groupIterator = group.iterator();
-            while (groupIterator.hasNext()) {
-                String state = (String) groupIterator.next();
-                HashMap<String, Integer> index = this.stateToGroup(state);
-                // if there's already a group available:
-                if (groupsIndex.containsKey(index)) {
-                    this.partition.get(groupsIndex.get(index)).add(state);
-                } else {
-                    HashSet<String> auxGroup = new HashSet<String>();
-                    auxGroup.add(state);
-                    this.partition.add(auxGroup);
-                    // adding index to the groupsIndex:
-                    groupsIndex.put(index, groupsIndex.size()+1);
+            if (group.size() > 1) {
+                Iterator groupIterator = group.iterator();
+                while (groupIterator.hasNext()) {
+                    String state = (String) groupIterator.next();
+                    HashMap<String, Integer> index = this.stateToGroup(state);
+                    System.out.print("For state " + state + ", stateToGoup: " + index);
+                    // if there's already a group available:
+                    if (groupsIndex.containsKey(index)) {
+                        System.out.println("Se acopla");
+                        newPartition.get(groupsIndex.get(index)).add(state);
+                    } else {
+                        System.out.println("Se separa");
+                        HashSet<String> auxGroup = new HashSet<String>();
+                        auxGroup.add(state);
+                        newPartition.add(auxGroup);
+                        // adding index to the groupsIndex:
+                        groupsIndex.put(index, newPartition.size()-1);
+                    }
                 }
+            } else {
+                newPartition.add(group);
             }
         }
         return newPartition;
@@ -91,10 +93,17 @@ public class AFDtoAFDmin {
 
     // builds the new AFD from the partition:
     public void buildNewAFD() {
+        AutomataFD newAFD = new AutomataFD();
+        // select representant states:
+        // build newAFD using representant states
+        // set init state and final states
+        // purge the newAFD
     }
 
     // removes inactive states, unreachable states and undefined transitions:
     public void purgeAFD() {
+        // remove inactive states
+        // remove unreachable states
     }
 
     // the minimization algorithm:
