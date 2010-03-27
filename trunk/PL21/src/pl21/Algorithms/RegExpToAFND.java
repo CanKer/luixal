@@ -315,8 +315,5 @@ public class RegExpToAFND {
         result.renameStates(result.getNumberOfStates() + 1);
         result.renameStates(0);
         System.out.println("RESULT:\n" + result);
-        ShowingGraphs sg = new ShowingGraphs(result);
-        sg.generateFile();
-        sg.show();
     }
 }

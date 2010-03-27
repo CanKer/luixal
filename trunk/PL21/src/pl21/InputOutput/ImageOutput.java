@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package pl21.Algorithms;
+package pl21.InputOutput;
 
 import java.io.File;
 import pl21.Automata.AutomataFD;
@@ -13,19 +13,26 @@ import pl21.Automata.AutomataFND;
  *
  * @author nemesis
  */
-public class ShowingGraphs {
+public class ImageOutput {
 
     AutomataFND graph;
     AutomataFD graphFD;
+    String filename;
 
-    public ShowingGraphs(AutomataFND graph) {
+    public ImageOutput(AutomataFND graph, String filename) {
         this.graph = new AutomataFND(graph);
         this.graphFD = null;
+        if (filename == null) {
+            this.filename = this.graph.getId();
+        } else {
+            this.filename = filename;
+        }
     }
 
-    public ShowingGraphs(AutomataFD graph) {
+    public ImageOutput(AutomataFD graph, String filename) {
         this.graphFD = new AutomataFD(graph);
         this.graph = null;
+        this.filename = filename;
     }
 
     public String convertGraphToDotFormat() {
@@ -71,30 +78,11 @@ public class ShowingGraphs {
         return result;
     }
 
-    public void generateFile() {
+    public void writeFile() {
         GraphViz gv = new GraphViz();
         gv.addln(this.convertGraphToDotFormat());
-        System.out.println(gv.getDotSource());
-
-        String filename = "";
-        if (this.graph != null) {
-            filename = "outFND.png";
-        } else {
-            filename = "outFD.png";
-        }
-        File out = new File(filename);
+        File out = new File(this.filename);
         gv.writeGraphToFile(gv.getGraph(gv.getDotSource()), out);
-        System.out.println(out.getAbsolutePath());
-    }
-
-    public void show() {
-        Frame frame = new Frame();
-        if (this.graph != null) {
-            frame.setImage("/home/nemesis/development/googlecode/luixal/PL21/outFND.png");
-        } else {
-            frame.setImage("/home/nemesis/development/googlecode/luixal/PL21/outFD.png");
-        }
-        frame.setVisible(true);
     }
 
     public static void main(String[] args) throws InterruptedException {
@@ -102,10 +90,9 @@ public class ShowingGraphs {
         afnd.addInitState("e0");
         afnd.addFinalState("e1");
         afnd.addTransition("e0", "e1", "B");
-        ShowingGraphs sg = new ShowingGraphs(afnd);
+        ImageOutput sg = new ImageOutput(afnd, "jojo.png");
         System.out.println(sg.convertGraphToDotFormat());
-        sg.generateFile();
-        sg.show();
+        sg.writeFile();
     }
 
 }

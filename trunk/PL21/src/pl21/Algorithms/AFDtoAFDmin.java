@@ -5,6 +5,7 @@
 
 package pl21.Algorithms;
 
+import pl21.InputOutput.ImageOutput;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -176,7 +177,7 @@ public class AFDtoAFDmin {
         AFDtoAFDmin minimizer = new AFDtoAFDmin(afd);
         minimizer.minimize();
         minimizer.buildNewAFD();
-        ShowingGraphs sgFD = new ShowingGraphs(minimizer.getAFD());
-        sgFD.generateFile();
+        ImageOutput sgFD = new ImageOutput(minimizer.getAFD(), "out.png");
+        sgFD.writeFile();
     }
 }

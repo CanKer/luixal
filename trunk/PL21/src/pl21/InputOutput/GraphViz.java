@@ -1,4 +1,4 @@
-package pl21.Algorithms;
+package pl21.InputOutput;
 
 // GraphViz.java - a simple API to call dot from Java programs
 
