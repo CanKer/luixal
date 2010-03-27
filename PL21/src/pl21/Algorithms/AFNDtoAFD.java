@@ -121,17 +121,11 @@ public class AFNDtoAFD {
         AutomataFND afnd = regtoafnd.TwoStacksAlgorithm("(a|b)*·a·b·b");
         afnd.renameStates(afnd.getNumberOfStates() + 1);
         afnd.renameStates(0);
-        ShowingGraphs sg = new ShowingGraphs(afnd);
-        sg.generateFile();
-//        sg.show();
 
         AFNDtoAFD afntoafd = new AFNDtoAFD(afnd);
         afntoafd.conversion();
         AutomataFD afd = new AutomataFD(afntoafd.getAFD());
         afd.renameStates(0);
         System.out.println("-----> " + afd.getGraph().keySet());
-        ShowingGraphs sgFD = new ShowingGraphs(afd);
-        sgFD.generateFile();
-//        sgFD.show();
     }
 }
