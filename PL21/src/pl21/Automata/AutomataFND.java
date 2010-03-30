@@ -16,21 +16,25 @@ import java.util.HashSet;
 public class AutomataFND extends Automata {
 
     private HashMap<String, HashMap<String, HashSet<String>>> graph;
+    private HashSet<String> finalStates;
 
     public AutomataFND() {
         super();
         this.id += this.id + " - AFND";
         this.graph = new HashMap<String, HashMap<String, HashSet<String>>>();
+        this.finalStates = new HashSet<String>();
     }
 
     public AutomataFND(String id) {
         super(id);
         this.graph = new HashMap<String, HashMap<String, HashSet<String>>>();
+        this.finalStates = new HashSet<String>();
     }
 
     public AutomataFND(AutomataFND afnd) {
         super(afnd);
         this.graph = new HashMap<String, HashMap<String, HashSet<String>>>(afnd.graph);
+        this.finalStates = new HashSet<String>(afnd.getFinalStates());
     }
 
 
@@ -38,6 +42,7 @@ public class AutomataFND extends Automata {
     public boolean clearAll() {
         if (super.clearAll()) {
             this.graph.clear();
+            this.finalStates.clear();
             return (this.graph.size() == 0);
         }
         return false;
@@ -61,6 +66,14 @@ public class AutomataFND extends Automata {
         } else {
             return false;
         }
+    }
+
+    public HashSet<String> getFinalStates() {
+        return this.finalStates;
+    }
+
+    public void addFinalStates(HashSet<String> states) {
+        this.finalStates.addAll(states);
     }
 
     @Override
@@ -199,6 +212,26 @@ public class AutomataFND extends Automata {
             if (this.init_state.equals(oldName)) this.init_state = newName;
             if (this.final_state.equals(oldName)) this.final_state = newName;
             // too much commented i think... well, let's say it's for dummies ;)
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean addAutomataFD(AutomataFD afd, String state, String symbol) {
+        if (this.isState(state)) {
+            // adding the AFD:
+            this.renameStates(0);
+            afd.renameStates(this.getNumberOfStates());
+            this.alphabet.addAll(afd.getAlphabet());
+            for (String s:afd.getGraph().keySet()) {
+                for (String t:afd.getGraph().get(s).keySet()) {
+                    this.addState(s);
+                    this.addTransition(s, afd.getGraph().get(s).get(t), t);
+                }
+            }
+            this.addTransition(state, afd.getInitState(), symbol);
+            this.addTransition(afd.getFinalState(), this.final_state, "#");
             return true;
         } else {
             return false;
