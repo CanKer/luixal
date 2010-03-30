@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 import pl21.Automata.AutomataFND;
+import pl21.InputOutput.ImageOutput;
 
 /**
  *
@@ -27,13 +28,13 @@ public class RegExpToAFND {
     Stack<AutomataFND> termStack;
     
 
-    RegExpToAFND() {
+    public RegExpToAFND() {
         this.regex = "";
         this.opStack = new Stack<String>();
         this.termStack = new Stack<AutomataFND>();
     }
 
-    RegExpToAFND(String regex) {
+    public RegExpToAFND(String regex) {
         this.regex = regex;
         this.opStack = new Stack<String>();
         this.termStack = new Stack<AutomataFND>();
@@ -315,5 +316,8 @@ public class RegExpToAFND {
         result.renameStates(result.getNumberOfStates() + 1);
         result.renameStates(0);
         System.out.println("RESULT:\n" + result);
+
+        ImageOutput io = new ImageOutput(result, "result.png");
+        io.writeFile();
     }
 }
