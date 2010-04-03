@@ -76,6 +76,7 @@ public abstract class Automata {
     abstract boolean isFinalState(String state);
     abstract boolean removeState(String state);
     abstract Integer getNumberOfStates();
+    abstract String goTo(String state, String symbol);
 
     // Alphabet related methods:
     public HashSet<String> getAlphabet() {

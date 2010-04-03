@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Stack;
 import pl21.Automata.AutomataFD;
 import pl21.Automata.AutomataFND;
+import pl21.InputOutput.ImageOutput;
 
 /**
  *
@@ -108,8 +109,9 @@ public class AFNDtoAFD {
                     }
                     this.afd.addTransition(this.generateStateName(T), this.generateStateName(U), s);
                     if (U.contains(this.afnd.getFinalState())) {
+                        this.afd.addFinalState(this.generateStateName(U));
                         this.afd.setFinalState(this.generateStateName(U));
-                        this.afd.addFinalStates(U);
+//                        this.afd.addFinalStates(U);
                     }
                 }
             }
@@ -121,9 +123,12 @@ public class AFNDtoAFD {
         AutomataFND afnd = regtoafnd.TwoStacksAlgorithm("(a|b)*·a·b·b");
         afnd.renameStates(afnd.getNumberOfStates() + 1);
         afnd.renameStates(0);
+        ImageOutput io = new ImageOutput(afnd, "AFND");
+        io.writeFile();
 
         AFNDtoAFD afntoafd = new AFNDtoAFD(afnd);
         afntoafd.conversion();
+        System.out.println("TTTTTTTTTTTTTTTTT " + afntoafd.transitionsTo("e6", "#"));
         AutomataFD afd = new AutomataFD(afntoafd.getAFD());
         afd.renameStates(0);
         System.out.println("-----> " + afd.getGraph().keySet());

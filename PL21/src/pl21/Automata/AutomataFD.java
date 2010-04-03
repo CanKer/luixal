@@ -254,6 +254,7 @@ public class AutomataFD extends Automata {
         String aux = this.id + "\n";
         aux += "Alphabet: " + this.alphabet.toString() + "\n";
         aux += "States: " + this.graph.keySet().toString() + "\n";
+        aux += "Init State: " + this.init_state + "\n";
         aux += "Final States: " + this.finalStates.toString() + "\n";
         for (String state:this.graph.keySet()) {
             aux += "State: " + state + ":\n";
@@ -262,6 +263,25 @@ public class AutomataFD extends Automata {
             }
         }
         return aux;
+    }
+
+    @Override
+    public String goTo(String state, String symbol) {
+        if (this.graph.containsKey(state) && this.graph.get(state).containsKey(symbol)) {
+            return this.graph.get(state).get(symbol);
+        } else {
+            return null;
+        }
+    }
+
+    public boolean isValid(String input) {
+        String auxState = this.getInitState();
+
+        for (int i = 0; i < input.length(); i++) {
+            auxState = this.goTo(auxState, String.valueOf(input.charAt(i)));
+        }
+
+        return this.finalStates.contains(auxState);
     }
 
     public static void main(String[] args) {
