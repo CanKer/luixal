@@ -46,13 +46,13 @@ public class ImageOutput {
         String result = "digraph graph_name_here {\n";
         result += "\trankdir=LR;\n";
         result += "\tsize=" + '"' + "8,5" + '"' + ";\n";
-        result += "\tnode [shape = doublecircle]; " + this.graph.getFinalState() + ";\n";
-        result += "\tnode [shape = square]; " + this.graph.getInitState() + ";\n";
+        result += "\tnode [shape = doublecircle]; " + '"' + this.graph.getFinalState()+ '"' + ";\n";
+        result += "\tnode [shape = square]; " + '"' + this.graph.getInitState() + '"' + ";\n";
         result += "\tnode [shape = circle];\n\n";
         for (String initState:this.graph.getGraph().keySet()) {
             for (String symbol:this.graph.getGraph().get(initState).keySet()) {
                 for (String destState:this.graph.getGraph().get(initState).get(symbol)) {
-                    result += "\t" + initState + " -> " + destState + " [ label = " + '"' + symbol + '"' + " ];\n";
+                    result += "\t" + '"' + initState + '"' + " -> " + '"' + destState + '"' + " [ label = " + '"' + symbol + '"' + " ];\n";
                 }
             }
         }
@@ -65,12 +65,16 @@ public class ImageOutput {
         String result = "digraph graph_name_here {\n";
         result += "\trankdir=LR;\n";
         result += "\tsize=" + '"' + "8,5" + '"' + ";\n";
-        result += "\tnode [shape = doublecircle]; " + this.graphFD.getFinalState() + ";\n";
-        result += "\tnode [shape = square]; " + this.graphFD.getInitState() + ";\n";
+        result += "\tnode [shape = doublecircle]; ";
+        for (String s:this.graphFD.getFinalStates()) {
+            result += '"' + s + '"';
+        }
+        result += "\n";
+        result += "\tnode [shape = square]; " + '"' + this.graphFD.getInitState() + '"' + ";\n";
         result += "\tnode [shape = circle];\n\n";
         for (String initState:this.graphFD.getGraph().keySet()) {
             for (String symbol:this.graphFD.getGraph().get(initState).keySet()) {
-                result += "\t" + initState + " -> " + this.graphFD.getGraph().get(initState).get(symbol) + " [ label = " + '"' + symbol + '"' + " ];\n";
+                result += "\t" + '"' + initState + '"' + " -> " + '"' + this.graphFD.getGraph().get(initState).get(symbol) + '"' + " [ label = " + '"' + symbol + '"' + " ];\n";
             }
         }
 

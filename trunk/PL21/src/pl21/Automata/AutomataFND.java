@@ -51,7 +51,7 @@ public class AutomataFND extends Automata {
     @Override
     public boolean addState(String state) {
         if (this.graph.containsKey(state)) {
-            return false;
+            return true;
         } else {
             this.graph.put(state, new HashMap<String, HashSet<String>>());
             return true;
@@ -62,6 +62,7 @@ public class AutomataFND extends Automata {
     public boolean addFinalState(String state) {
         if (this.addState(state)) {
             this.setFinalState(state);
+            this.finalStates.add(state);
             return true;
         } else {
             return false;
@@ -221,12 +222,13 @@ public class AutomataFND extends Automata {
     public boolean addAutomataFD(AutomataFD afd, String state, String symbol) {
         if (this.isState(state)) {
             // adding the AFD:
-            this.renameStates(0);
+//            this.renameStates(0);
             afd.renameStates(this.getNumberOfStates());
             this.alphabet.addAll(afd.getAlphabet());
             for (String s:afd.getGraph().keySet()) {
                 for (String t:afd.getGraph().get(s).keySet()) {
                     this.addState(s);
+                    this.addState(afd.getGraph().get(s).get(t));
                     this.addTransition(s, afd.getGraph().get(s).get(t), t);
                 }
             }
@@ -297,6 +299,15 @@ public class AutomataFND extends Automata {
             }
         }
         return aux;
+    }
+
+    @Override
+    public String goTo(String state, String symbol) {
+        if (this.graph.containsKey(state) && this.graph.get(state).containsKey(symbol)) {
+            return (String) this.graph.get(state).get(symbol).toArray()[0];
+        } else {
+            return null;
+        }
     }
 
     public static void main(String[] args) {

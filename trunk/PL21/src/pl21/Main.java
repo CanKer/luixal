@@ -116,6 +116,7 @@ public class Main {
             out.appendSeparator();
             if (writeImages) {
                 ImageOutput io = new ImageOutput(a, "AFD - " + a.getId() + ".png");
+                System.out.println(io.convertGraphToDotFormat());
                 io.writeFile();
             }
         }
@@ -128,12 +129,24 @@ public class Main {
         String nf = "Ef";
         afnd.addInitState(ni);
         afnd.addFinalState(nf);
+        afnd.renameStates(0);
         // adding AFDs to the new AFND:
         for (AutomataFD afd:automatasFD) {
-            afnd.addAutomataFD(afd, ni, "#");
+            afnd.addAutomataFD(afd, afnd.getInitState(), "#");
         }
         // returning the new AFND:
         return afnd;
+    }
+
+    /**
+     * 
+     * @param afnd
+     * @return
+     */
+    public static AutomataFD buildNewAFD(AutomataFND afnd) {
+        AFNDtoAFD conversor = new AFNDtoAFD(afnd);
+        conversor.conversion();
+        return conversor.getAFD();
     }
 
     /**
@@ -142,13 +155,15 @@ public class Main {
     public static void main(String[] args) throws IOException {
         System.out.println("UEM - Language Processors 2.1 - Luis Alberto Pérez García - 19903316");
         System.out.println("--------------------------------------------------------------------\n");
-        if (!processArgs(args)) {
-            BufferedReader keybInput = new BufferedReader(new InputStreamReader(System.in));
-            System.out.print("Input file (RE's file): ");
-            input = keybInput.readLine();
-            System.out.print("Output file (Automata's file): ");
-            output = keybInput.readLine();
-        }
+//        if (!processArgs(args)) {
+//            BufferedReader keybInput = new BufferedReader(new InputStreamReader(System.in));
+//            System.out.print("Input file (RE's file): ");
+//            input = keybInput.readLine();
+//            System.out.print("Output file (Automata's file): ");
+//            output = keybInput.readLine();
+//        }
+        input = "resfile2";
+        output = "outfile";
 
         System.out.println("\nReading REs from input file... ");
         getInputREs(input);
@@ -158,10 +173,26 @@ public class Main {
         generateAFDs();
         System.out.println("\nWriting output... ");
         writeOutput(true);
-        AutomataFND afnd = buildNewAFND();
+        AutomataFND afnd = new AutomataFND(buildNewAFND());
         System.out.println("\n\n///////////////\n" + afnd.toString());
         ImageOutput io = new ImageOutput(afnd, "AFND - " + afnd.getId() + ".png");
         io.writeFile();
+        AutomataFD afd = new AutomataFD(buildNewAFD(afnd));
+        AFDtoAFDmin minimizer = new AFDtoAFDmin(afd);
+        minimizer.minimize();
+        minimizer.buildNewAFD();
+        afd = new AutomataFD(minimizer.getAFD());
+        ImageOutput io2 = new ImageOutput(afd, "AFD - " + afd.getId() + ".png");
+        io2.writeFile();
+        System.out.println("\n\n");
+        System.out.println("Is the input 'B' valid? " + afd.isValid("B"));
+        System.out.println("Is the input 'C' valid? " + afd.isValid("C"));
+        System.out.println("Is the input 'A' valid? " + afd.isValid("A"));
+        System.out.println("Is the input 'BC' valid? " + afd.isValid("BC"));
+        System.out.println("Is the input 'ABC' valid? " + afd.isValid("ABC"));
+        System.out.println("Is the input 'AB' valid? " + afd.isValid("AB"));
+        System.out.println("Is the input 'ABABABAB' valid? " + afd.isValid("ABABABAB"));
+        System.out.println("Is the input 'ABABABABC' valid? " + afd.isValid("ABABABABC"));
     }
 
 }
