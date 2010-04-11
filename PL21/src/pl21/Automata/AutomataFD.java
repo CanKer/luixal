@@ -8,6 +8,7 @@ package pl21.Automata;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Stack;
 
 /**
  *
@@ -244,6 +245,27 @@ public class AutomataFD extends Automata {
                 }
                 return r;
             }
+        } else {
+            return false;
+        }
+    }
+
+    public boolean stateReachableFromNonRecursive(String orig_state, String dest_state) {
+        if (this.isState(orig_state) && this.isState(dest_state)) {
+            if (orig_state.equals(dest_state)) return true;
+            Stack<String> statesStack = new Stack<String>();
+            statesStack.push(orig_state);
+
+            while (!statesStack.isEmpty()) {
+                if (this.getStatesReachableFrom(statesStack.peek()).contains(dest_state)) {
+                    return true;
+                } else {
+                    statesStack.addAll(this.getStatesReachableFrom(statesStack.pop()));
+                }
+            }
+
+            return false;
+
         } else {
             return false;
         }
