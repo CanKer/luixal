@@ -137,7 +137,8 @@ public class AFDtoAFDmin {
         }
         // remove unreachable states
         for (String state:this.afd.getStates()) {
-            if (!this.afd.stateReachableFrom(this.afd.getInitState(), state)) this.afd.removeState(state);
+            //if (!this.afd.stateReachableFrom(this.afd.getInitState(), state)) this.afd.removeState(state);
+            if (!this.afd.stateReachableFromNonRecursive(this.afd.getInitState(), state)) this.afd.removeState(state);
         }
     }
 
