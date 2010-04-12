@@ -1,8 +1,0 @@
-#!/bin/sh
-killall turpial
-ifconfig wlan0 down
-cat resfile
-echo "*******"
-cat resfile2
-echo "*******"
-diff resfile resfile2

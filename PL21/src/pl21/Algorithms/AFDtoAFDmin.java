@@ -71,13 +71,10 @@ public class AFDtoAFDmin {
                 while (groupIterator.hasNext()) {
                     String state = (String) groupIterator.next();
                     HashMap<String, Integer> index = this.stateToGroup(state);
-                    System.out.print("For state " + state + ", stateToGoup: " + index);
                     // if there's already a group available:
                     if (groupsIndex.containsKey(index)) {
-                        System.out.println("Se acopla");
                         newPartition.get(groupsIndex.get(index)).add(state);
                     } else {
-                        System.out.println("Se separa");
                         HashSet<String> auxGroup = new HashSet<String>();
                         auxGroup.add(state);
                         newPartition.add(auxGroup);
@@ -146,13 +143,11 @@ public class AFDtoAFDmin {
     public void minimize() {
         ArrayList<HashSet<String>> p2 = new ArrayList<HashSet<String>>();
         p2 = new ArrayList<HashSet<String>>(this.rePartition());
-        System.out.println("From partitions:\n\tP: " + this.partition + "\n\tP': " + p2);
 
         int aux = 0;
         while (!p2.equals(this.partition)) {
             this.partition = new ArrayList<HashSet<String>>(p2);
             p2 = this.rePartition();
-            System.out.println("Iteration " + aux + ":\n\tP: " + this.partition + "\n\tP': " + p2);
             aux++;
         }
     }

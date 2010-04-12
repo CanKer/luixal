@@ -114,7 +114,7 @@ public class Main {
             out.appendSeparator();
             if (writeImages) {
                 ImageOutput io = new ImageOutput(a, "AFD - " + a.getId() + ".png");
-                System.out.println(io.convertGraphToDotFormat());
+//                System.out.println(io.convertGraphToDotFormat());
                 io.writeFile();
             }
         }

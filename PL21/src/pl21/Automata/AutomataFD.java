@@ -161,7 +161,6 @@ public class AutomataFD extends Automata {
         while (r == true && counter < states.size()) {
             r = this.renameState(states.get(counter), "e" + (counter + fromValue));
             counter++;
-            System.out.println(counter);
         }
         return r;
     }
@@ -253,14 +252,25 @@ public class AutomataFD extends Automata {
     public boolean stateReachableFromNonRecursive(String orig_state, String dest_state) {
         if (this.isState(orig_state) && this.isState(dest_state)) {
             if (orig_state.equals(dest_state)) return true;
+            HashSet<String> states = new HashSet<String>();
             Stack<String> statesStack = new Stack<String>();
             statesStack.push(orig_state);
+            states.add(orig_state);
 
             while (!statesStack.isEmpty()) {
-                if (this.getStatesReachableFrom(statesStack.peek()).contains(dest_state)) {
+                String auxState = statesStack.pop();
+                if (this.getStatesReachableFrom(auxState).contains(dest_state)) {
                     return true;
                 } else {
-                    statesStack.addAll(this.getStatesReachableFrom(statesStack.pop()));
+                    if (!this.getStatesReachableFrom(auxState).isEmpty()) {
+                        for (String s:this.getStatesReachableFrom(auxState)) {
+                            if (!statesStack.contains(s) && !auxState.equals(s) && !states.contains(s)) {
+                                statesStack.push(s);
+                                states.add(s);
+                            }
+                        }
+//                        statesStack.addAll(this.getStatesReachableFrom(auxState));
+                    }
                 }
             }
 

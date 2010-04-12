@@ -1,6 +1,1 @@
-AoB=A|B
-AyB=A·B
-ABC=A·B·C
-AoBoC=A|B|C
-(AyB)oC=(A·B)|C
-Chunga1=(A·B)*·C
+Chunga1=(A|B)*·C·C·D
