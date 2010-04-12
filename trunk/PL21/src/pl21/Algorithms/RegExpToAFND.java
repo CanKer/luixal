@@ -168,10 +168,7 @@ public class RegExpToAFND {
     }
 
     public void OperateTopOfStack() {
-        System.out.println("TermStack: " + this.termStack.size());
-        System.out.println("OpStack: " + this.opStack.size() + " // " + this.opStack);
         String aux = this.opStack.pop();
-        System.out.println("Operator: " + aux);
 //        this.opStack.push(input);
         if (this.isUnaryOperator(aux)) {
             // pop term, operate and push term:
@@ -187,7 +184,6 @@ public class RegExpToAFND {
     public void reformatRange() {
         if (this.regex.contains("[")) {
             String substring = this.regex.substring(this.regex.indexOf("["), this.regex.indexOf("]"));
-            System.out.println("Substsring to reformat: " + substring);
             String newsubstring = String.valueOf(substring.charAt(0));
             char previous = '-';
             for (int i = 1; i < substring.length(); i++) {
@@ -205,14 +201,12 @@ public class RegExpToAFND {
             }
             // replacing substring in regex:
             this.regex = this.regex.replace(substring, newsubstring);
-            System.out.println("New regex: " + this.regex + " after replacing with: " + newsubstring);
         }
     }
 
     public AutomataFND TwoStacksAlgorithm() {
         // reformating ranges "[...]" to make it more general:
         this.reformatRange();
-        System.out.println("New regex (ranges reformated): " + this.regex);
         
         for (int i = 0; i < this.regex.length(); i++) {
             String input = String.valueOf(this.regex.charAt(i));
