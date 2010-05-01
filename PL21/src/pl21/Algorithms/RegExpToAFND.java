@@ -140,7 +140,7 @@ public class RegExpToAFND {
             result.addTransition(preFinalB, newstate, "#");
         }
         if (op.equals("-")) {
-            //dome some stuff for ranges here:
+            //doing some stuff for ranges here:
             result.addInitState("ei");
             result.addFinalState("ef");
             Integer counter = 0;
@@ -222,18 +222,8 @@ public class RegExpToAFND {
                         this.opStack.push(input);
                     } else {
                         // if aux has lower priority, operate the top of the stack:
-//                        String aux = this.opStack.pop();
                         this.OperateTopOfStack();
                         this.opStack.push(input);
-//                        if (this.isUnaryOperator(aux)) {
-//                            // pop term, operate and push term:
-//                            this.termStack.push(this.operate(this.termStack.pop(), aux));
-//                        } else {
-//                            // pop term, pop term, operate and push term:
-//                            AutomataFND afndB = this.termStack.pop();
-//                            AutomataFND afndA = this.termStack.pop();
-//                            this.termStack.push(this.operate(afndA, afndB, aux));
-//                        }
                     }
                 }
             } else if (this.isDelimiter(input)) {
@@ -258,21 +248,6 @@ public class RegExpToAFND {
                 this.OperateTopOfStack();
             }
             return this.termStack.pop();
-//            if (this.opStack.size() == 1) {
-//                if (this.isUnaryOperator(this.opStack.peek())) {
-//                    this.termStack.push(this.operate(this.termStack.pop(), this.opStack.pop()));
-//                } else {
-//                    AutomataFND afndB = this.termStack.pop();
-//                    AutomataFND afndA = this.termStack.pop();
-//                    this.termStack.push(this.operate(afndA, afndB, this.opStack.pop()));
-//                }
-//                return this.termStack.pop();
-//            } else {
-//                System.out.println("ERROR!! :: TwoStacksAlgorithm");
-//                System.out.println("opStack: " + this.opStack.toString());
-//                System.out.println("termStack: " + this.termStack.toString());
-//                return new AutomataFND();
-//            }
         }
     }
 

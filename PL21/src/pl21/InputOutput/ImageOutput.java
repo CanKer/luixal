@@ -46,7 +46,13 @@ public class ImageOutput {
         String result = "digraph graph_name_here {\n";
         result += "\trankdir=LR;\n";
         result += "\tsize=" + '"' + "8,5" + '"' + ";\n";
-        result += "\tnode [shape = doublecircle]; " + '"' + this.graph.getFinalState()+ '"' + ";\n";
+//        result += "\tnode [shape = doublecircle]; " + '"' + this.graph.getFinalState()+ '"' + ";\n";
+        result += "\tnode [shape = doublecircle]; ";
+        result += '"' + this.graph.getFinalState() + '"';
+        for (String s:this.graph.getFinalStates().keySet()) {
+            result += '"' + s + '"';
+        }
+        result += ";\n";
         result += "\tnode [shape = square]; " + '"' + this.graph.getInitState() + '"' + ";\n";
         result += "\tnode [shape = circle];\n\n";
         for (String initState:this.graph.getGraph().keySet()) {
@@ -66,7 +72,7 @@ public class ImageOutput {
         result += "\trankdir=LR;\n";
         result += "\tsize=" + '"' + "8,5" + '"' + ";\n";
         result += "\tnode [shape = doublecircle]; ";
-        for (String s:this.graphFD.getFinalStates()) {
+        for (String s:this.graphFD.getFinalStates().keySet()) {
             result += '"' + s + '"';
         }
         result += "\n";
@@ -77,7 +83,6 @@ public class ImageOutput {
                 result += "\t" + '"' + initState + '"' + " -> " + '"' + this.graphFD.getGraph().get(initState).get(symbol) + '"' + " [ label = " + '"' + symbol + '"' + " ];\n";
             }
         }
-
         result += "}\n";
         return result;
     }

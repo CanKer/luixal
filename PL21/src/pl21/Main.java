@@ -48,9 +48,10 @@ public class Main {
         REs = new HashMap<String, String>();
         Input in = new Input(input);
         ArrayList<String> aux = in.readAllFile();
-        
+
+        System.out.println();
         for (String s:aux) {
-            System.out.println("\n- " + s);
+            System.out.println("- " + s);
             StringTokenizer st = new StringTokenizer(s, "=");
             REs.put(st.nextToken(), st.nextToken());
         }
@@ -64,6 +65,7 @@ public class Main {
             AutomataFND afnd = new AutomataFND(alg.TwoStacksAlgorithm());
             System.out.println("DONE!");
             afnd.setId(s);
+            afnd.getFinalStates().put(afnd.getFinalState(), s); // setting the token for the finalState
             automatasFND.add(afnd);
         }
     }
@@ -82,6 +84,7 @@ public class Main {
             minimizer.buildNewAFD();
             minimizer.getAFD().renameStates(0);
             minimizer.getAFD().setId(afnd.getId());
+            minimizer.getAFD().getFinalStates().put(minimizer.getAFD().getFinalState(), afnd.getId());
             System.out.println("DONE!");
             automatasFD.add(minimizer.getAFD());
         }
