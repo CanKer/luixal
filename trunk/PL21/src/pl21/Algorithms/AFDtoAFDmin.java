@@ -33,7 +33,7 @@ public class AFDtoAFDmin {
         // first group (non-terminal's one):
         this.partition.add(this.afd.getNonFinalStates());
         // second group (terminal's one):
-        this.partition.add(this.afd.getFinalStates());
+        this.partition.add( new HashSet<String>(this.afd.getFinalStates().keySet()));
     }
 
     // return the index for the group in the partition containing the state:

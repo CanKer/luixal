@@ -19,25 +19,28 @@ import java.util.Stack;
 public class AutomataFD extends Automata {
 
     private HashMap<String, HashMap<String, String>> graph;
-    private HashSet<String> finalStates;
+    private HashMap<String, String> finalStates;
 
     public AutomataFD() {
         super();
         this.id += this.id + " - AFD";
         this.graph = new HashMap<String, HashMap<String, String>>();
-        this.finalStates = new HashSet<String>();
+//        this.finalStates = new HashSet<String>();
+        this.finalStates = new HashMap<String, String>();
     }
 
     public AutomataFD(String id) {
         super(id);
         this.graph = new HashMap<String, HashMap<String, String>>();
-        this.finalStates = new HashSet<String>();
+//        this.finalStates = new HashSet<String>();
+        this.finalStates = new HashMap<String, String>();
     }
 
     public AutomataFD(AutomataFD afd) {
         super(afd);
         this.graph = new HashMap<String, HashMap<String, String>>(afd.graph);
-        this.finalStates = new HashSet<String>(afd.getFinalStates());
+//        this.finalStates = new HashSet<String>(afd.getFinalStates());
+        this.finalStates = new HashMap<String, String>(afd.getFinalStates());
     }
 
     public boolean addState(String state) {
@@ -53,16 +56,16 @@ public class AutomataFD extends Automata {
     public boolean addFinalState(String state) {
         if (this.addState(state)) {
             this.setFinalState(state);
-            this.finalStates.add(state);
+            this.finalStates.put(state, "");
             return true;
         } else {
             return false;
         }
     }
 
-    public void addFinalStates(HashSet<String> states) {
-        if (this.graph.keySet().containsAll(states)) {
-            this.finalStates.addAll(states);
+    public void addFinalStates(HashMap<String, String> states) {
+        if (this.graph.keySet().containsAll(states.keySet())) {
+            this.finalStates.putAll(states);
         }
     }
 
@@ -120,7 +123,7 @@ public class AutomataFD extends Automata {
     public boolean setFinalState(String state) {
         if (this.graph.containsKey(state)) {
             this.final_state = state;
-            this.finalStates.add(state);
+            this.finalStates.put(state, "");
             return true;
         } else {
             return false;
@@ -129,7 +132,7 @@ public class AutomataFD extends Automata {
 
     @Override
     public boolean isFinalState(String state) {
-        return this.finalStates.contains(state);
+        return this.finalStates.keySet().contains(state);
     }
 
     @Override
@@ -182,9 +185,9 @@ public class AutomataFD extends Automata {
             }
             if (this.init_state.equals(oldName)) this.init_state = newName;
             if (this.final_state.equals(oldName)) this.final_state = newName;
-            if (this.finalStates.contains(oldName)) {
+            if (this.finalStates.keySet().contains(oldName)) {
+                this.finalStates.put(newName, this.finalStates.get(oldName));
                 this.finalStates.remove(oldName);
-                this.finalStates.add(newName);
             }
             return true;
         } else {
@@ -209,7 +212,7 @@ public class AutomataFD extends Automata {
         return false;
     }
 
-    public HashSet<String> getFinalStates() {
+    public HashMap<String, String> getFinalStates() {
         return this.finalStates;
     }
 
@@ -224,7 +227,7 @@ public class AutomataFD extends Automata {
 
     public HashSet<String> getNonFinalStates() {
         HashSet<String> aux = new HashSet<String>(this.graph.keySet());
-        aux.removeAll(this.finalStates);
+        aux.removeAll(this.finalStates.keySet());
         return aux;
     }
 
@@ -313,7 +316,7 @@ public class AutomataFD extends Automata {
             auxState = this.goTo(auxState, String.valueOf(input.charAt(i)));
         }
 
-        return this.finalStates.contains(auxState);
+        return this.finalStates.keySet().contains(auxState);
     }
 
     public static void main(String[] args) {

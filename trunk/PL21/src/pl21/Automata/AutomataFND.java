@@ -16,25 +16,29 @@ import java.util.HashSet;
 public class AutomataFND extends Automata {
 
     private HashMap<String, HashMap<String, HashSet<String>>> graph;
-    private HashSet<String> finalStates;
+//    private HashSet<String> finalStates;
+    private HashMap<String, String> finalStates;
 
     public AutomataFND() {
         super();
         this.id += this.id + " - AFND";
         this.graph = new HashMap<String, HashMap<String, HashSet<String>>>();
-        this.finalStates = new HashSet<String>();
+//        this.finalStates = new HashSet<String>();
+        this.finalStates = new HashMap<String, String>();
     }
 
     public AutomataFND(String id) {
         super(id);
         this.graph = new HashMap<String, HashMap<String, HashSet<String>>>();
-        this.finalStates = new HashSet<String>();
+//        this.finalStates = new HashSet<String>();
+        this.finalStates = new HashMap<String, String>();
     }
 
     public AutomataFND(AutomataFND afnd) {
         super(afnd);
         this.graph = new HashMap<String, HashMap<String, HashSet<String>>>(afnd.graph);
-        this.finalStates = new HashSet<String>(afnd.getFinalStates());
+//        this.finalStates = new HashSet<String>(afnd.getFinalStates());
+        this.finalStates = new HashMap<String, String>(afnd.finalStates);
     }
 
 
@@ -54,7 +58,7 @@ public class AutomataFND extends Automata {
             return true;
         } else {
             this.graph.put(state, new HashMap<String, HashSet<String>>());
-            return true;
+            return this.graph.containsKey(state);
         }
     }
 
@@ -62,19 +66,20 @@ public class AutomataFND extends Automata {
     public boolean addFinalState(String state) {
         if (this.addState(state)) {
             this.setFinalState(state);
-            this.finalStates.add(state);
+//            this.finalStates.add(state);
+            this.finalStates.put(state, "");
             return true;
         } else {
             return false;
         }
     }
 
-    public HashSet<String> getFinalStates() {
+    public HashMap<String, String> getFinalStates() {
         return this.finalStates;
     }
 
-    public void addFinalStates(HashSet<String> states) {
-        this.finalStates.addAll(states);
+    public void addFinalStates(HashMap<String, String> states) {
+        this.finalStates.putAll(states);
     }
 
     @Override
@@ -175,9 +180,8 @@ public class AutomataFND extends Automata {
         return false;
     }
 
-    public void renameStates(Integer fromValue) {
-        
-        // array for having a realtion between the old and the new names:
+    public void renameStates(Integer fromValue) {        
+        // array for having a relationship between the old and the new names:
         ArrayList<String> statesNames = new ArrayList<String>();
         for (String s:this.graph.keySet()) {
             statesNames.add(s);
@@ -212,7 +216,11 @@ public class AutomataFND extends Automata {
             // setting init/final state if needed:
             if (this.init_state.equals(oldName)) this.init_state = newName;
             if (this.final_state.equals(oldName)) this.final_state = newName;
-            // too much commented i think... well, let's say it's for dummies ;)
+            if (this.finalStates.keySet().contains(oldName)) {
+                this.finalStates.put(newName, this.finalStates.get(oldName));
+                this.finalStates.remove(oldName);
+            }
+
             return true;
         } else {
             return false;
@@ -234,24 +242,21 @@ public class AutomataFND extends Automata {
             }
             this.addTransition(state, afd.getInitState(), symbol);
             this.addTransition(afd.getFinalState(), this.final_state, "#");
+            this.finalStates.put(afd.getFinalState(), afd.getId());
             return true;
         } else {
             return false;
         }
     }
 
-    public void addAutomataFND(AutomataFND afnd) {
-        // adding the alphabet:
-        this.alphabet.addAll(afnd.getAlphabet());
-        // adding states and transitions:
-        this.graph.putAll(afnd.getGraph());
-    }
+//    public void addAutomataFND(AutomataFND afnd) {
+//        // adding the alphabet:
+//        this.alphabet.addAll(afnd.getAlphabet());
+//        // adding states and transitions:
+//        this.graph.putAll(afnd.getGraph());
+//    }
 
     public void mergeAutomataFND(AutomataFND afnd) {
-        // merging alphabet:
-//        for (String s:afnd.getAlphabet()) {
-//            this.alphabet.add(s);
-//        }
         this.alphabet.addAll(afnd.getAlphabet());
         // merging states and transitions:
         for (String s:afnd.getGraph().keySet()) {

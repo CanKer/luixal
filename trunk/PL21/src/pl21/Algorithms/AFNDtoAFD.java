@@ -108,11 +108,22 @@ public class AFNDtoAFD {
                         this.afd.addState(this.generateStateName(U));
                     }
                     this.afd.addTransition(this.generateStateName(T), this.generateStateName(U), s);
-                    if (U.contains(this.afnd.getFinalState())) {
-                        this.afd.addFinalState(this.generateStateName(U));
-                        this.afd.setFinalState(this.generateStateName(U));
-//                        this.afd.addFinalStates(U);
+                    ///// BIG CHANGES HERE!!- UNCOMMENT BLOCK AND REMOVE FOLLOWING TO GET BACK!! ///////
+//                    if (U.contains(this.afnd.getFinalState())) {
+//                        this.afd.addFinalState(this.generateStateName(U));
+//                        this.afd.setFinalState(this.generateStateName(U));
+////                        this.afd.addFinalStates(U);
+//                    }
+                    String fs_name = this.generateStateName(U);
+                    for (String fs:U) {
+                        if (this.afnd.getFinalStates().containsKey(fs)) {
+                            if (this.afd.getFinalStates().containsKey(fs)) {
+                                System.out.println("SE PISAAAAAAAAAAAAAA: " + this.afd.getFinalStates().get(fs) + " CON " + this.afnd.getFinalStates().get(fs));
+                            }
+                            this.afd.getFinalStates().put(fs_name, this.afnd.getFinalStates().get(fs));
+                        }
                     }
+                    ///// BIG CHANGES END //////////////////////////////////////////////////////////////
                 }
             }
         }
