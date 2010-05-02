@@ -66,6 +66,10 @@ public class Main {
             System.out.println("DONE!");
             afnd.setId(s);
             afnd.getFinalStates().put(afnd.getFinalState(), s); // setting the token for the finalState
+            System.out.println("Final States with associated tokens (" + afnd.getId() + "):");
+            for (String sss:afnd.getFinalStates().keySet()) {
+                System.out.println(">> " + sss + " --> " + afnd.getFinalStates().get(sss));
+            }
             automatasFND.add(afnd);
         }
     }
@@ -86,6 +90,10 @@ public class Main {
             minimizer.getAFD().setId(afnd.getId());
             minimizer.getAFD().getFinalStates().put(minimizer.getAFD().getFinalState(), afnd.getId());
             System.out.println("DONE!");
+            System.out.println("Final States with associated tokens (" + minimizer.getAFD().getId() + "):");
+            for (String sss:afnd.getFinalStates().keySet()) {
+                System.out.println(">> " + sss + " --> " + minimizer.getAFD().getFinalStates().get(sss));
+            }
             automatasFD.add(minimizer.getAFD());
         }
     }
@@ -136,6 +144,10 @@ public class Main {
             afnd.addAutomataFD(afd, afnd.getInitState(), "#");
         }
         // returning the new AFND:
+        System.out.println("Final States with associated tokens (" + afnd.getId() + "):");
+        for (String sss:afnd.getFinalStates().keySet()) {
+            System.out.println(">> " + sss + " --> " + afnd.getFinalStates().get(sss));
+        }
         return afnd;
     }
 
@@ -179,12 +191,19 @@ public class Main {
         ImageOutput io = new ImageOutput(afnd, "AFND - " + afnd.getId() + ".png");
         io.writeFile();
         AutomataFD afd = new AutomataFD(buildNewAFD(afnd));
+        io = new ImageOutput(afd, "AFD - Penul.png");
+        io.writeFile();
         AFDtoAFDmin minimizer = new AFDtoAFDmin(afd);
         minimizer.minimize();
         minimizer.buildNewAFD();
         afd = new AutomataFD(minimizer.getAFD());
         ImageOutput io2 = new ImageOutput(afd, "AFD - " + afd.getId() + ".png");
         io2.writeFile();
+        System.out.println("\n\n");
+        System.out.println("Final States with associated tokens:");
+        for (String s:afd.getFinalStates().keySet()) {
+            System.out.println(">> " + s + " --> " + afd.getFinalStates().get(s));
+        }
         System.out.println("\n\n");
         System.out.println("Is the input 'B' valid? " + afd.isValid("B"));
         System.out.println("Is the input 'C' valid? " + afd.isValid("C"));

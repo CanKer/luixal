@@ -13,7 +13,7 @@ T4
 Alphabet: [A]
 States: [e1, e0]
 Init State: e0
-Final State: e1
+Final State(s): e1{e1=T4}
 State: e1:
 State: e0:
 	A --> [e1]
@@ -23,7 +23,7 @@ T1
 Alphabet: [D, #, A, B, C]
 States: [e3, e4, e1, e2, e0_0, e5_0e7, e6]
 Init State: e3
-Final State: e6
+Final State(s): e6{e6=T1}
 State: e3:
 	# --> [e3, e4]
 	C --> [e2]
@@ -45,7 +45,7 @@ T3
 Alphabet: [A, B, C]
 States: [e3, e1, e0, e2_0e4]
 Init State: e0
-Final State: e3
+Final State(s): e3{e3=T3}
 State: e3:
 State: e1:
 	B --> [e2_0e4]
@@ -59,7 +59,7 @@ T2
 Alphabet: [#, A, B]
 States: [e4, e2, e0_0, e1e3]
 Init State: e1e3
-Final State: e4
+Final State(s): e4{e4=T2}
 State: e4:
 State: e2:
 	# --> [e4]
@@ -88,7 +88,7 @@ T1
 Alphabet: [D, A, B, C]
 States: [e3, e2, e1', e0]
 Init State: e1'
-Final States: {e3=T1, e1'=}
+Final States: {e3=T1}
 State: e3:
 State: e2:
 	C --> e0

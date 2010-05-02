@@ -119,6 +119,7 @@ public class RegExpToAFND {
             result.mergeAutomataFND(auxB);
             // setting final state:
             result.setFinalState(auxB.getFinalState());
+            if (result.getFinalStates().containsKey(newname)) result.getFinalStates().remove(newname);
         }
         if (op.equals("|")) {
             result = new AutomataFND(termA);
@@ -129,7 +130,7 @@ public class RegExpToAFND {
             String newname = result.getInitState() + auxB.getInitState();
             result.renameState(result.getInitState(), newname);
             auxB.renameState(auxB.getInitState(), newname);
-            // keeeping final states as we need them after the merge:
+            // keeping final states as we need them after the merge:
             String preFinalA = result.getFinalState();
             String preFinalB = auxB.getFinalState();
             result.mergeAutomataFND(auxB);
@@ -138,6 +139,7 @@ public class RegExpToAFND {
             result.addFinalState(newstate);
             result.addTransition(preFinalA, newstate, "#");
             result.addTransition(preFinalB, newstate, "#");
+            if (result.getFinalStates().containsKey(result.getInitState())) result.getFinalStates().remove(result.getInitState());
         }
         if (op.equals("-")) {
             //doing some stuff for ranges here:
@@ -281,7 +283,7 @@ public class RegExpToAFND {
 //        System.out.println(result);
         // Block for testing TwoStacksAlgorithm:
 //        AutomataFND result = test.TwoStacksAlgorithm("a·(b|c)·(b·c)");
-        AutomataFND result = test.TwoStacksAlgorithm("(a|b)*·a·b·b");
+        AutomataFND result = test.TwoStacksAlgorithm("(a|b)*|c·c·d");
         result.renameStates(result.getNumberOfStates() + 1);
         result.renameStates(0);
         System.out.println("RESULT:\n" + result);
