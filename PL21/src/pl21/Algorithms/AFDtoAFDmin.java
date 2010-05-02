@@ -38,7 +38,7 @@ public class AFDtoAFDmin {
         System.out.println("P: " + this.partition);
     }
 
-    // return the index for the group in the partition containing the state:
+    // returns the index for the group in the partition containing the state:
     private Integer stateInGroup(String state) {
         Integer result = 0;
         
@@ -48,6 +48,15 @@ public class AFDtoAFDmin {
             }
         }
 
+        return result;
+    }
+
+    // checks if the 'state' can join the group 'states' of the partition (checking if those states were NOT together in the previous partition).
+    private boolean isJoinable(HashSet<String> states, String state) {
+        boolean result = true;
+        for (String s:states) {
+            result &= (this.stateInGroup(s) == this.stateInGroup(state));
+        }
         return result;
     }
 
@@ -74,7 +83,7 @@ public class AFDtoAFDmin {
                     String state = (String) groupIterator.next();
                     HashMap<String, Integer> index = this.stateToGroup(state);
                     // if there's already a group available:
-                    if (groupsIndex.containsKey(index)) {
+                    if (groupsIndex.containsKey(index) && this.isJoinable(newPartition.get(groupsIndex.get(index)), state)) {
                         newPartition.get(groupsIndex.get(index)).add(state);
                     } else {
                         HashSet<String> auxGroup = new HashSet<String>();
