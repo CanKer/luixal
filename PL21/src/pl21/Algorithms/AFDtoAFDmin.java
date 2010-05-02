@@ -34,6 +34,8 @@ public class AFDtoAFDmin {
         this.partition.add(this.afd.getNonFinalStates());
         // second group (terminal's one):
         this.partition.add( new HashSet<String>(this.afd.getFinalStates().keySet()));
+        System.out.println("//// TRAZA DE MINIMIZACION //////");
+        System.out.println("P: " + this.partition);
     }
 
     // return the index for the group in the partition containing the state:
@@ -148,6 +150,7 @@ public class AFDtoAFDmin {
         while (!p2.equals(this.partition)) {
             this.partition = new ArrayList<HashSet<String>>(p2);
             p2 = this.rePartition();
+            System.out.println("Repartition " + aux + ": " + p2);
             aux++;
         }
     }
