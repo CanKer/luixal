@@ -31,6 +31,8 @@ public class Main {
     // Automatas:
     static ArrayList<AutomataFND> automatasFND;
     static ArrayList<AutomataFD> automatasFD;
+    // Token priority:
+    static ArrayList<String> tokens;
 
     public static boolean processArgs(String[] args) {
         for (int i = 0; i < args.length; i++) {
@@ -46,6 +48,7 @@ public class Main {
 
     public static void getInputREs(String filename) throws FileNotFoundException, IOException {
         REs = new HashMap<String, String>();
+        tokens = new ArrayList<String>();
         Input in = new Input(input);
         ArrayList<String> aux = in.readAllFile();
 
@@ -53,8 +56,24 @@ public class Main {
         for (String s:aux) {
             System.out.println("- " + s);
             StringTokenizer st = new StringTokenizer(s, "=");
-            REs.put(st.nextToken(), st.nextToken());
+            String token = st.nextToken();
+            REs.put(token, st.nextToken());
+            tokens.add(token);
         }
+    }
+
+    public static String getPriorityER(String ERs) {
+        StringTokenizer st = new StringTokenizer(ERs, ",");
+        Integer index = tokens.size() + 1;
+
+        while (st.hasMoreTokens()) {
+            Integer auxIndex = tokens.size() + 1;
+            String aux = st.nextToken();
+            if (tokens.contains(aux)) auxIndex = tokens.indexOf(aux);
+            if (auxIndex < index) index = auxIndex;
+        }
+
+        return tokens.get(index);
     }
 
     public static void generateAFNDs() {
@@ -190,7 +209,15 @@ public class Main {
         ImageOutput io2 = new ImageOutput(afd, afd.getId() + ".png");
         io2.writeFile();
         System.out.println("AFD " + afnd.getId() + "\n" + afd);
-//        System.out.println("Is the input 'B' valid? " + afd.isValid("B"));
+
+        System.out.println("Tokens ordered: " + tokens);
+        String inputa = "DE";
+        System.out.print("Is the input '" + inputa + "' valid? ");
+        if (afd.isValid(inputa)) {
+            System.out.println("Yeah, token: " + getPriorityER(afd.getFinalStates().get(afd.getValidState(inputa))));
+        } else {
+            System.out.println("Noup!");
+        }
 //        System.out.println("Is the input 'C' valid? " + afd.isValid("C"));
 //        System.out.println("Is the input 'A' valid? " + afd.isValid("A"));
 //        System.out.println("Is the input 'BC' valid? " + afd.isValid("BC"));
