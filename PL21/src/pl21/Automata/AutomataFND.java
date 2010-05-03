@@ -21,7 +21,7 @@ public class AutomataFND extends Automata {
 
     public AutomataFND() {
         super();
-        this.id += this.id + " - AFND";
+        this.id += this.id;
         this.graph = new HashMap<String, HashMap<String, HashSet<String>>>();
 //        this.finalStates = new HashSet<String>();
         this.finalStates = new HashMap<String, String>();
@@ -296,7 +296,7 @@ public class AutomataFND extends Automata {
         aux += "Alphabet: " + this.alphabet.toString() + "\n";
         aux += "States: " + this.graph.keySet().toString() + "\n";
         aux += "Init State: " + this.getInitState() + "\n";
-        aux += "Final State(s): " + this.getFinalState() + this.getFinalStates() + "\n";
+        aux += "Final State(s): " + this.getFinalState() + " " + this.getFinalStates() + "\n";
         for (String state:this.graph.keySet()) {
             aux += "State: " + state + ":\n";
             for (String symbol:this.graph.get(state).keySet()) {

@@ -117,10 +117,21 @@ public class AFNDtoAFD {
                     String fs_name = this.generateStateName(U);
                     for (String fs:U) {
                         if (this.afnd.getFinalStates().containsKey(fs)) {
-                            if (this.afd.getFinalStates().containsKey(fs)) {
-                                System.out.println("SE PISAAAAAAAAAAAAAA: " + this.afd.getFinalStates().get(fs) + " CON " + this.afnd.getFinalStates().get(fs));
+                            if (this.afd.getFinalStates().containsKey(fs_name)) {
+//                                System.out.println("SE PISA: " + this.afd.getFinalStates().get(fs_name) + " CON " + this.afnd.getFinalStates().get(fs));
+                                if (this.afd.getFinalStates().get(fs_name).isEmpty()) {
+//                                    System.out.println("METEMOS: " + this.afnd.getFinalStates().get(fs));
+                                    this.afd.getFinalStates().put(fs_name, this.afnd.getFinalStates().get(fs));
+                                } else {
+//                                    System.out.println("VALORES: '" + this.afd.getFinalStates().get(fs_name) + "'" +  "\t'" + this.afnd.getFinalStates().get(fs) + "'");
+                                    if (!this.afnd.getFinalStates().get(fs).equals((""))) {
+                                        this.afd.getFinalStates().put(fs_name, this.afnd.getFinalStates().get(fs) + "," + this.afd.getFinalStates().get(fs_name));
+                                    }
+                                }
+                            } else {
+                                this.afd.getFinalStates().put(fs_name, this.afnd.getFinalStates().get(fs));
+//                                System.out.println("blabla");
                             }
-                            this.afd.getFinalStates().put(fs_name, this.afnd.getFinalStates().get(fs));
                         }
                     }
                     ///// BIG CHANGES END //////////////////////////////////////////////////////////////
