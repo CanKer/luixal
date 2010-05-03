@@ -31,6 +31,7 @@ public class AutomataFD extends Automata {
 
     public AutomataFD(String id) {
         super(id);
+        this.setId(this.getId() + " Minimized");
         this.graph = new HashMap<String, HashMap<String, String>>();
 //        this.finalStates = new HashSet<String>();
         this.finalStates = new HashMap<String, String>();

@@ -66,10 +66,6 @@ public class Main {
             System.out.println("DONE!");
             afnd.setId(s);
             afnd.getFinalStates().put(afnd.getFinalState(), s); // setting the token for the finalState
-            System.out.println("Final States with associated tokens (" + afnd.getId() + "):");
-            for (String sss:afnd.getFinalStates().keySet()) {
-                System.out.println(">> " + sss + " --> " + afnd.getFinalStates().get(sss));
-            }
             automatasFND.add(afnd);
         }
     }
@@ -90,10 +86,6 @@ public class Main {
             minimizer.getAFD().setId(afnd.getId());
             minimizer.getAFD().getFinalStates().put(minimizer.getAFD().getFinalState(), afnd.getId());
             System.out.println("DONE!");
-            System.out.println("Final States with associated tokens (" + minimizer.getAFD().getId() + "):");
-            for (String sss:afnd.getFinalStates().keySet()) {
-                System.out.println(">> " + sss + " --> " + minimizer.getAFD().getFinalStates().get(sss));
-            }
             automatasFD.add(minimizer.getAFD());
         }
     }
@@ -144,10 +136,6 @@ public class Main {
             afnd.addAutomataFD(afd, afnd.getInitState(), "#");
         }
         // returning the new AFND:
-        System.out.println("Final States with associated tokens (" + afnd.getId() + "):");
-        for (String sss:afnd.getFinalStates().keySet()) {
-            System.out.println(">> " + sss + " --> " + afnd.getFinalStates().get(sss));
-        }
         return afnd;
     }
 
@@ -166,7 +154,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException {
-        System.out.println("UEM - Language Processors 2.1 - Luis Alberto Pérez García - 19903316");
+        System.out.println("UEM - Language Processors 2.4 - Luis Alberto Pérez García - 19903316");
         System.out.println("--------------------------------------------------------------------\n");
 //        if (!processArgs(args)) {
 //            BufferedReader keybInput = new BufferedReader(new InputStreamReader(System.in));
@@ -187,32 +175,29 @@ public class Main {
         System.out.println("\nWriting output... ");
         writeOutput(true);
         AutomataFND afnd = new AutomataFND(buildNewAFND());
-        System.out.println("\n\n///////////////\n" + afnd.toString());
-        ImageOutput io = new ImageOutput(afnd, "AFND - " + afnd.getId() + ".png");
+        ImageOutput io = new ImageOutput(afnd, afnd.getId() + ".png");
         io.writeFile();
+        System.out.println("AFND " + afnd.getId() + "\n" + afnd);
         AutomataFD afd = new AutomataFD(buildNewAFD(afnd));
-        io = new ImageOutput(afd, "AFD - Penul.png");
+        io = new ImageOutput(afd, "AFD - Resultant - NO Minimizado.png");
         io.writeFile();
+        System.out.println("AFD Resultant NO Minimizado:" + "\n" + afd);
         AFDtoAFDmin minimizer = new AFDtoAFDmin(afd);
         minimizer.minimize();
         minimizer.buildNewAFD();
         afd = new AutomataFD(minimizer.getAFD());
-        ImageOutput io2 = new ImageOutput(afd, "AFD - " + afd.getId() + ".png");
+        afd.setId("AFD Resultant Minimizado");
+        ImageOutput io2 = new ImageOutput(afd, afd.getId() + ".png");
         io2.writeFile();
-        System.out.println("\n\n");
-        System.out.println("Final States with associated tokens:");
-        for (String s:afd.getFinalStates().keySet()) {
-            System.out.println(">> " + s + " --> " + afd.getFinalStates().get(s));
-        }
-        System.out.println("\n\n");
-        System.out.println("Is the input 'B' valid? " + afd.isValid("B"));
-        System.out.println("Is the input 'C' valid? " + afd.isValid("C"));
-        System.out.println("Is the input 'A' valid? " + afd.isValid("A"));
-        System.out.println("Is the input 'BC' valid? " + afd.isValid("BC"));
-        System.out.println("Is the input 'ABC' valid? " + afd.isValid("ABC"));
-        System.out.println("Is the input 'AB' valid? " + afd.isValid("AB"));
-        System.out.println("Is the input 'ABABABAB' valid? " + afd.isValid("ABABABAB"));
-        System.out.println("Is the input 'ABABABABC' valid? " + afd.isValid("ABABABABC"));
+        System.out.println("AFD " + afnd.getId() + "\n" + afd);
+//        System.out.println("Is the input 'B' valid? " + afd.isValid("B"));
+//        System.out.println("Is the input 'C' valid? " + afd.isValid("C"));
+//        System.out.println("Is the input 'A' valid? " + afd.isValid("A"));
+//        System.out.println("Is the input 'BC' valid? " + afd.isValid("BC"));
+//        System.out.println("Is the input 'ABC' valid? " + afd.isValid("ABC"));
+//        System.out.println("Is the input 'AB' valid? " + afd.isValid("AB"));
+//        System.out.println("Is the input 'ABABABAB' valid? " + afd.isValid("ABABABAB"));
+//        System.out.println("Is the input 'ABABABABC' valid? " + afd.isValid("ABABABABC"));
     }
 
 }

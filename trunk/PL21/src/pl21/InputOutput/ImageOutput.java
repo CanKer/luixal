@@ -6,6 +6,7 @@
 package pl21.InputOutput;
 
 import java.io.File;
+import java.util.HashSet;
 import pl21.Automata.AutomataFD;
 import pl21.Automata.AutomataFND;
 
@@ -46,7 +47,7 @@ public class ImageOutput {
         String result = "digraph graph_name_here {\n";
         result += "\trankdir=LR;\n";
         result += "\tsize=" + '"' + "8,5" + '"' + ";\n";
-//        result += "\tnode [shape = doublecircle]; " + '"' + this.graph.getFinalState()+ '"' + ";\n";
+        result += "\tnode [shape = doublecircle]; " + '"' + this.graph.getFinalState()+ '"' + ";\n";
         result += "\tnode [shape = doublecircle]; ";
         result += '"' + this.graph.getFinalState() + '"';
         for (String s:this.graph.getFinalStates().keySet()) {
