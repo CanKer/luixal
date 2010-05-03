@@ -310,14 +310,22 @@ public class AutomataFD extends Automata {
         }
     }
 
-    public boolean isValid(String input) {
+    public String getValidState(String input) {
         String auxState = this.getInitState();
 
         for (int i = 0; i < input.length(); i++) {
             auxState = this.goTo(auxState, String.valueOf(input.charAt(i)));
         }
 
-        return this.finalStates.keySet().contains(auxState);
+        if (this.finalStates.keySet().contains(auxState)) {
+            return auxState;
+        } else {
+            return "error";
+        }
+    }
+
+    public boolean isValid(String input) {
+        return this.finalStates.keySet().contains(this.getValidState(input));
     }
 
     public static void main(String[] args) {
