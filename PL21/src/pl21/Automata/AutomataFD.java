@@ -31,7 +31,6 @@ public class AutomataFD extends Automata {
 
     public AutomataFD(String id) {
         super(id);
-        this.setId(this.getId() + " Minimized");
         this.graph = new HashMap<String, HashMap<String, String>>();
 //        this.finalStates = new HashSet<String>();
         this.finalStates = new HashMap<String, String>();
@@ -144,7 +143,8 @@ public class AutomataFD extends Automata {
             this.finalStates.remove(state);
             // removing transitions going to 'state':
             for (String i:this.graph.keySet()) {
-                for (String j:this.graph.get(i).keySet()) {
+                HashSet<String> auxSet = new HashSet<String>(this.graph.get(i).keySet());
+                for (String j:auxSet) {
                     if (this.graph.get(i).get(j).equals(state)) {
                         this.graph.get(i).remove(j);
                     }

@@ -70,7 +70,7 @@ public class RegExpToAFND {
 
     // Generates a new AFND with just the term as a transition.
     public AutomataFND operate(String term) {
-        AutomataFND afnd = new AutomataFND();
+        AutomataFND afnd = new AutomataFND(term);
         afnd.addState("e0");
         afnd.addState("e1");
         afnd.setInitState("e0");
@@ -81,7 +81,7 @@ public class RegExpToAFND {
 
     // Operates unary operations: '*', '+', '?'
     public AutomataFND operate(AutomataFND term, String op) {
-        AutomataFND result = new AutomataFND(term);
+        AutomataFND result = new AutomataFND(term.getId() + op);
 
         if (op.equals("*")) {
             result.addInitState("e" + result.getNumberOfStates().toString());
@@ -101,12 +101,14 @@ public class RegExpToAFND {
     // Operates binary operations: '|', '·'
     public AutomataFND operate(AutomataFND termA, AutomataFND termB, String op) {
         // creating and initializing a new AFND for the result:
-        AutomataFND result = new AutomataFND();
+        AutomataFND result = new AutomataFND(termA.getId() + op + termB.getId());
 //        AutomataFND auxB = new AutomataFND(termB);
         // renaming states for keeping some order:
 //        result.renameStates(0);
 //        auxB.renameStates(result.getNumberOfStates());
 
+        System.out.println("\n\t>> Operando " + termA.getId() + " y " + termB.getId() + " con el operador " + op);
+        
         if (op.equals("·")) {
             result = new AutomataFND(termA);
             AutomataFND auxB = new AutomataFND(termB);
@@ -139,6 +141,8 @@ public class RegExpToAFND {
             result.addFinalState(newstate);
             result.addTransition(preFinalA, newstate, "#");
             result.addTransition(preFinalB, newstate, "#");
+            result.getFinalStates().remove(preFinalA);
+            result.getFinalStates().remove(preFinalB);
             if (result.getFinalStates().containsKey(result.getInitState())) result.getFinalStates().remove(result.getInitState());
         }
         if (op.equals("-")) {
@@ -157,6 +161,7 @@ public class RegExpToAFND {
             }
         }
 
+        result.setId(termA.getId() + op + termB.getId());
         return result;
     }
 
@@ -232,9 +237,11 @@ public class RegExpToAFND {
                 if (this.isOpenDelimiter(input)) {
                     this.opStack.push(input);
                 } else {
-                    while (!this.opStack.isEmpty() && !this.isCloseDelimiter(this.opStack.peek())) {
+                    while (!this.opStack.isEmpty() && !this.isOpenDelimiter(this.opStack.peek())) {
                         this.OperateTopOfStack();
                     }
+                    // poping the open delimiter:
+                    this.opStack.pop();
                 }
             } else {
                 // stuff for terminals...

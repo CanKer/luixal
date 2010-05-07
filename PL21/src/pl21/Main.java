@@ -205,7 +205,7 @@ public class Main {
         minimizer.minimize();
         minimizer.buildNewAFD();
         afd = new AutomataFD(minimizer.getAFD());
-        afd.setId("AFD Resultant Minimizado");
+        afd.setId("AFD Resultant Minimized");
         ImageOutput io2 = new ImageOutput(afd, afd.getId() + ".png");
         io2.writeFile();
         System.out.println("AFD " + afnd.getId() + "\n" + afd);
