@@ -5,7 +5,9 @@
 
 package pl21;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -169,6 +171,44 @@ public class Main {
         return conversor.getAFD();
     }
 
+    /*
+     * Reads an input file for analyze with the generated AFDmin.
+     *
+     * @param filename Name of the file to analyze.
+     */
+    public static ArrayList<String> readFileForAnalyze(String filename) throws IOException {
+        BufferedReader ibr = new BufferedReader(new FileReader(filename));
+//        HashMap<String, String> result = new HashMap<String, String>();
+        ArrayList<String> result = new ArrayList<String>();
+//        Integer counter = 0;
+        String aux = ibr.readLine();
+        while (aux != null) {
+//            result.put(counter.toString(), aux);
+            result.add(aux);
+            aux = ibr.readLine();
+//            counter++;
+        }
+        return result;
+    }
+
+    public static String AnalyzeInputFile(String filename, AutomataFD afd) throws IOException {
+        String result = "";
+        ArrayList<String> entries = readFileForAnalyze(filename);
+        // analyzing lines:
+        for (int i = 0; i < entries.size(); i++) {
+            Integer counterH = 0;
+            StringTokenizer words = new StringTokenizer(entries.get(i));
+            while (words.hasMoreTokens()) {
+                String word = words.nextToken();
+                if (afd.isValid(word)) {
+                    result +="Found " + word + " at (" + i + "," + counterH + ") with token '" + getPriorityER(afd.getFinalStates().get(afd.getValidState(word))) + "'.\n";
+                }
+                counterH += word.length() + 1;
+            }
+        }
+        return result;
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -201,23 +241,25 @@ public class Main {
         io = new ImageOutput(afd, "AFD - Resultant - NO Minimizado.png");
         io.writeFile();
         System.out.println("AFD Resultant NO Minimizado:" + "\n" + afd);
+        System.out.println("TOKENS SIN MINIMIZAR: " + afd.getFinalStates());
         AFDtoAFDmin minimizer = new AFDtoAFDmin(afd);
         minimizer.minimize();
         minimizer.buildNewAFD();
         afd = new AutomataFD(minimizer.getAFD());
+        System.out.println("TOKENS TRAS MINIMIZAR: " + afd.getFinalStates());
         afd.setId("AFD Resultant Minimized");
         ImageOutput io2 = new ImageOutput(afd, afd.getId() + ".png");
         io2.writeFile();
         System.out.println("AFD " + afnd.getId() + "\n" + afd);
 
         System.out.println("Tokens ordered: " + tokens);
-        String inputa = "DE";
-        System.out.print("Is the input '" + inputa + "' valid? ");
-        if (afd.isValid(inputa)) {
-            System.out.println("Yeah, token: " + getPriorityER(afd.getFinalStates().get(afd.getValidState(inputa))));
-        } else {
-            System.out.println("Noup!");
-        }
+//        String inputa = "aaaaaabcF";
+//        System.out.print("Is the input '" + inputa + "' valid? ");
+//        if (afd.isValid(inputa)) {
+//            System.out.println("Yeah, token: " + getPriorityER(afd.getFinalStates().get(afd.getValidState(inputa))));
+//        } else {
+//            System.out.println("Noup!");
+//        }
 //        System.out.println("Is the input 'C' valid? " + afd.isValid("C"));
 //        System.out.println("Is the input 'A' valid? " + afd.isValid("A"));
 //        System.out.println("Is the input 'BC' valid? " + afd.isValid("BC"));
@@ -225,6 +267,7 @@ public class Main {
 //        System.out.println("Is the input 'AB' valid? " + afd.isValid("AB"));
 //        System.out.println("Is the input 'ABABABAB' valid? " + afd.isValid("ABABABAB"));
 //        System.out.println("Is the input 'ABABABABC' valid? " + afd.isValid("ABABABABC"));
+        System.out.println("\nAnalysis for input file (input.lex):\n" + AnalyzeInputFile("input.lex", afd));
     }
 
 }

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.StringTokenizer;
 import pl21.Automata.AutomataFD;
 import pl21.Automata.AutomataFND;
 
@@ -49,11 +50,24 @@ public class AFDtoAFDmin {
         return result;
     }
 
+    private boolean equalTokens(String s1, String s2) {
+        if (!this.afd.isFinalState(s1) || !this.afd.isFinalState(s2)) return false;
+        // pueden tener longitudes diferentes!!!
+        if (s1.length() != s2.length()) return false;
+        StringTokenizer stk1 = new StringTokenizer(s1, ",");
+        StringTokenizer stk2 = new StringTokenizer(s2, ",");
+        if (stk1.countTokens() != stk2.countTokens()) return false;
+        return true;
+    }
+
     // checks if the 'state' can join the group 'states' of the partition (checking if those states were NOT together in the previous partition).
     private boolean isJoinable(HashSet<String> states, String state) {
         boolean result = true;
         for (String s:states) {
             result &= (this.stateInGroup(s) == this.stateInGroup(state));
+            if (this.afd.isFinalState(s) && this.afd.isFinalState(state)) {
+                result &= this.afd.getFinalStates().get(s).equals(this.afd.getFinalStates().get(state));
+            }
         }
         return result;
     }
@@ -96,6 +110,13 @@ public class AFDtoAFDmin {
             }
         }
         return newPartition;
+    }
+
+    private String containsFinalStates(HashSet<String> hs) {
+        for (String s:hs) {
+            if (this.afd.getFinalStates().containsKey(s)) return s;
+        }
+        return null;
     }
 
     // builds the new AFD from the partition:

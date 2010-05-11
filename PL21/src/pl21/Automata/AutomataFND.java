@@ -241,7 +241,11 @@ public class AutomataFND extends Automata {
                 }
             }
             this.addTransition(state, afd.getInitState(), symbol);
-            this.addTransition(afd.getFinalState(), this.final_state, "#");
+//            this.addTransition(afd.getFinalState(), this.final_state, "#");
+            for (String s:afd.getFinalStates().keySet()) {
+                this.addTransition(s, this.final_state, "#");
+                this.finalStates.put(s, afd.getId());
+            }
             this.finalStates.put(afd.getFinalState(), afd.getId());
             return true;
         } else {
