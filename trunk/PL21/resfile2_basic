@@ -1,0 +1,10 @@
+T1=a
+T2=a*
+T3=a|b
+T4=(a|b)*
+Tx=(a|b)*·c
+Ty=(a|b)*|c
+T5=[a-b]
+T6=[a-b]*
+Tx2=[a-b]*·c
+Ty2=[a-b]*|c

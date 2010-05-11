@@ -7,6 +7,7 @@ package pl21.Algorithms;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Stack;
 import pl21.Automata.AutomataFD;
 import pl21.Automata.AutomataFND;
@@ -125,7 +126,10 @@ public class AFNDtoAFD {
                                 } else {
 //                                    System.out.println("VALORES: '" + this.afd.getFinalStates().get(fs_name) + "'" +  "\t'" + this.afnd.getFinalStates().get(fs) + "'");
                                     if (!this.afnd.getFinalStates().get(fs).equals((""))) {
-                                        this.afd.getFinalStates().put(fs_name, this.afnd.getFinalStates().get(fs) + "," + this.afd.getFinalStates().get(fs_name));
+                                        if (!this.afd.getFinalStates().get(fs_name).contains(this.afnd.getFinalStates().get(fs))) {
+                                            System.out.println("CONTIENEEEEEEE: " + this.afd.getFinalStates().get(fs_name) + "--->" + this.afd.getFinalStates().get(fs_name));
+                                            this.afd.getFinalStates().put(fs_name, this.afnd.getFinalStates().get(fs) + "," + this.afd.getFinalStates().get(fs_name));
+                                        }
                                     }
                                 }
                             } else {

@@ -79,12 +79,24 @@ public class RegExpToAFND {
         return afnd;
     }
 
+    private String generateNewName(AutomataFND afnd, String oldName) {
+        String newName = oldName;
+        while (afnd.isState(newName)) {
+            newName += "_0";
+        }
+        return newName;
+    }
+
     // Operates unary operations: '*', '+', '?'
     public AutomataFND operate(AutomataFND term, String op) {
-        AutomataFND result = new AutomataFND(term.getId() + op);
-
+        AutomataFND result = new AutomataFND(term);
+        result.setId("(" + term.getId() + ")" + op);
+//        AutomataFND result = new AutomataFND("(" + term.getId() + ")" + op);
         if (op.equals("*")) {
-            result.addInitState("e" + result.getNumberOfStates().toString());
+            String state = "e" + result.getNumberOfStates();
+            state = this.generateNewName(term, state);
+//            result.addInitState("e" + result.getNumberOfStates().toString());
+            result.addInitState(state);
             result.addTransition(result.getInitState(), result.getFinalState(), "#");
             result.addTransition(result.getFinalState(), term.getInitState(), "#");
         }
@@ -94,7 +106,6 @@ public class RegExpToAFND {
         if (op.equals("?")) {
             result.addTransition(result.getInitState(), result.getFinalState(), "#");
         }
-        
         return result;
     }
 
@@ -212,6 +223,8 @@ public class RegExpToAFND {
     }
 
     public AutomataFND TwoStacksAlgorithm() {
+        this.regex = this.regex.replace(" ", "|");
+        System.out.println("New REGEX: " + this.regex);
         // reformating ranges "[...]" to make it more general:
         this.reformatRange();
         
