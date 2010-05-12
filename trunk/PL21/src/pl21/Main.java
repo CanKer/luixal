@@ -209,6 +209,86 @@ public class Main {
         return result;
     }
 
+//    String auxState = this.getInitState();
+//
+//        for (int i = 0; i < input.length(); i++) {
+//            auxState = this.goTo(auxState, String.valueOf(input.charAt(i)));
+//        }
+//
+//        if (this.finalStates.keySet().contains(auxState)) {
+//            return auxState;
+//        } else {
+//            return "error";
+//        }
+
+    // READ FILE FOR ANALYZE
+//            BufferedReader ibr = new BufferedReader(new FileReader(filename));
+////        HashMap<String, String> result = new HashMap<String, String>();
+//        ArrayList<String> result = new ArrayList<String>();
+////        Integer counter = 0;
+//        String aux = ibr.readLine();
+//        while (aux != null) {
+////            result.put(counter.toString(), aux);
+//            result.add(aux);
+//            aux = ibr.readLine();
+////            counter++;
+//        }
+//        return result;
+    public static String AnalyzeInputFileNew(String filename, AutomataFD afd) throws IOException {
+        String result = "";
+        ArrayList<String> entries = readFileForAnalyze(filename);
+        // analyzing lines:
+        for (String line:entries) {
+            String state = afd.getInitState();
+            String word = "";
+            for (int c = 0; c < line.length(); c++) {
+                String newState = afd.goTo(state, String.valueOf(line.charAt(c)));
+//                System.out.println("ENTRADA=" + line.charAt(c) + "En el estado " + state + " para ir a " + newState);
+                if (newState == null) {
+                    // no podemos seguir
+                    if (afd.getFinalStates().containsKey(state)) {
+                        // me vale
+                        System.out.println("Found: " + getPriorityER(afd.getFinalStates().get(state)) + " :: " + word);
+                        c--;
+                    } else {
+                        // no me vale
+                        System.out.println("UNRECOGNIZED :: " + word + line.charAt(c));
+                    }
+                    word = "";
+                    state = afd.getInitState();
+                } else {
+                    // si podemos seguir
+                    state = newState;
+                    word += line.charAt(c);
+                }
+//                // vamos carácter a carácter... (un getValid)
+//                // pillamos el estado siguiente:
+//                System.out.print("Entrada: " + line.charAt(c));
+//                String newState = afd.goTo(state, String.valueOf(line.charAt(c)));
+////                System.out.println(" al estado " + newState);
+//                if (newState == null) {
+//                    if (afd.getFinalStates().containsKey(state)) {
+////                        System.out.println("Pillando estado... " + state);
+//                        System.out.println("Found: " + getPriorityER(afd.getFinalStates().get(state)) + " :: " + word);
+//                        c--;
+//                    } else {
+//                        System.out.println("UNRECOGNIZED! :: " + word);
+//                    }
+//                    state = afd.getInitState();
+//                    word = "";
+//                } else {
+//                    state = newState;
+//                    word += line.charAt(c);
+//                }
+
+            }
+            if (afd.getFinalStates().containsKey(state)) {
+                System.out.println("Found: " + getPriorityER(afd.getFinalStates().get(state)) + " :: " + word);
+            }
+        }
+        return result;
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -267,7 +347,8 @@ public class Main {
 //        System.out.println("Is the input 'AB' valid? " + afd.isValid("AB"));
 //        System.out.println("Is the input 'ABABABAB' valid? " + afd.isValid("ABABABAB"));
 //        System.out.println("Is the input 'ABABABABC' valid? " + afd.isValid("ABABABABC"));
-        System.out.println("\nAnalysis for input file (input.lex):\n" + AnalyzeInputFile("input.lex", afd));
+//        System.out.println("\nAnalysis for input file (input.lex):\n" + AnalyzeInputFile("input.lex", afd));
+        AnalyzeInputFileNew("input.lex", afd);
     }
 
 }

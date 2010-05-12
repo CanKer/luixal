@@ -223,7 +223,7 @@ public class RegExpToAFND {
     }
 
     public AutomataFND TwoStacksAlgorithm() {
-        this.regex = this.regex.replace(" ", "|");
+//        this.regex = this.regex.replace(" ", "|");
         System.out.println("New REGEX: " + this.regex);
         // reformating ranges "[...]" to make it more general:
         this.reformatRange();
