@@ -1,0 +1,1 @@
+The main idea is to have a project containing some different projects I'm working on at the university with educational purpouses so anyone chan check them out for learning :D
